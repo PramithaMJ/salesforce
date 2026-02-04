@@ -156,7 +156,38 @@ a:hover {
   max-width: 900px;
 }
 
-/* Hero */
+/* Main Content Container (for index.html) */
+.main-content {
+  margin-left: var(--sidebar-width);
+  margin-top: 60px;
+  padding: 0 48px 48px;
+}
+
+/* Hero Section */
+.hero-section {
+  text-align: center;
+  padding: 60px 0 40px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hero-section h1 {
+  font-size: 48px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, var(--text-primary), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-section .code-block {
+  max-width: 500px;
+  margin: 32px auto 0;
+  text-align: left;
+}
+
+/* Legacy Hero */
 .hero {
   text-align: center;
   padding: 80px 48px;
@@ -296,7 +327,40 @@ a:hover {
   color: #79c0ff;
 }
 
-/* Features Grid */
+/* Features Section (inside main-content) */
+.features-section {
+  padding: 20px 0 40px;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Example Section (inside main-content) */
+.example-section {
+  max-width: 900px;
+  margin: 0 auto;
+  padding-top: 20px;
+}
+
+.example-section h2 {
+  font-size: 24px;
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.example-section h2:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+/* Features Grid (legacy) */
 .features {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));

@@ -13,8 +13,12 @@
   <header class="header">
     <div class="logo">
       <div class="logo-icon">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+        <!-- Salesforce Cloud Icon -->
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path
+            d="M19.5 9.5c-.5-2.5-2.5-4.5-5-4.5-1.5 0-2.8.6-3.8 1.6-.6-.4-1.4-.6-2.2-.6-2.2 0-4 1.8-4 4 0 .3 0 .6.1.9C2.3 11.4 1 13 1 15c0 2.2 1.8 4 4 4h13c2.8 0 5-2.2 5-5 0-2.3-1.6-4.3-3.5-4.5z"
+            fill="currentColor" />
+          <path d="M12 10l-1 5h2l-1 4 4-6h-2.5l1.5-3H12z" fill="white" />
         </svg>
       </div>
       <span>Salesforce Go SDK</span>
@@ -59,97 +63,100 @@
     </div>
   </aside>
 
-  <section class="hero">
-    <h1>Salesforce Go SDK</h1>
-    <p class="hero-subtitle">
-      A production-grade Go SDK for Salesforce with complete API coverage, multiple authentication methods.
-    </p>
-    <div class="hero-buttons">
-      <a href="pages/getting-started.html" class="btn btn-primary">Get Started</a>
-      <a href="https://github.com/PramithaMJ/salesforce" class="btn btn-secondary" target="_blank">View on GitHub</a>
-    </div>
+  <main class="main-content">
+    <section class="hero-section">
+      <h1>Salesforce Go SDK</h1>
+      <p class="hero-subtitle">
+        A production-grade Go SDK for Salesforce with complete API coverage, multiple authentication methods.
+      </p>
+      <div class="hero-buttons">
+        <a href="pages/getting-started.html" class="btn btn-primary">Get Started</a>
+        <a href="https://github.com/PramithaMJ/salesforce" class="btn btn-secondary" target="_blank">View on GitHub</a>
+      </div>
 
-    <div class="code-block" style="max-width: 700px; margin: 0 auto; text-align: left;">
-      <div class="code-header">
-        <span>Quick Start</span>
-        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <div class="code-block">
+        <div class="code-header">
+          <span>Quick Start</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code><span class="keyword">go</span> get github.com/PramithaMJ/salesforce</code></pre>
       </div>
-      <pre><code><span class="keyword">go</span> get github.com/PramithaMJ/salesforce</code></pre>
-    </div>
-  </section>
+    </section>
 
-  <div class="features">
-    <div class="feature-card">
-      <div class="feature-icon">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-        </svg>
+    <section class="features-section">
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+          </div>
+          <h3>Multiple Auth Methods</h3>
+          <p>OAuth 2.0 refresh token, username-password, and direct access token support</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="20" x2="18" y2="10" />
+              <line x1="12" y1="20" x2="12" y2="4" />
+              <line x1="6" y1="20" x2="6" y2="14" />
+            </svg>
+          </div>
+          <h3>Complete API Coverage</h3>
+          <p>11 service packages covering SObjects, SOQL, Bulk, Composite, Analytics, and more</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="23 4 23 10 17 10" />
+              <polyline points="1 20 1 14 7 14" />
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+            </svg>
+          </div>
+          <h3>Bulk Operations</h3>
+          <p>Bulk API 2.0 with ingest and query jobs for high-volume data operations</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path
+                d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+            </svg>
+          </div>
+          <h3>Query Builders</h3>
+          <p>Fluent SOQL and SOSL query builders with type-safe construction</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+            </svg>
+          </div>
+          <h3>Composite API</h3>
+          <p>Batch, tree, graph, and collections for efficient multi-operation requests</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="1 4 1 10 7 10" />
+              <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+            </svg>
+          </div>
+          <h3>Built-in Retry</h3>
+          <p>Exponential backoff with configurable retries for resilient operations</p>
+        </div>
       </div>
-      <h3>Multiple Auth Methods</h3>
-      <p>OAuth 2.0 refresh token, username-password, and direct access token support</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="18" y1="20" x2="18" y2="10" />
-          <line x1="12" y1="20" x2="12" y2="4" />
-          <line x1="6" y1="20" x2="6" y2="14" />
-        </svg>
-      </div>
-      <h3>Complete API Coverage</h3>
-      <p>11 service packages covering SObjects, SOQL, Bulk, Composite, Analytics, and more</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="23 4 23 10 17 10" />
-          <polyline points="1 20 1 14 7 14" />
-          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
-        </svg>
-      </div>
-      <h3>Bulk Operations</h3>
-      <p>Bulk API 2.0 with ingest and query jobs for high-volume data operations</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path
-            d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
-        </svg>
-      </div>
-      <h3>Query Builders</h3>
-      <p>Fluent SOQL and SOSL query builders with type-safe construction</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-        </svg>
-      </div>
-      <h3>Composite API</h3>
-      <p>Batch, tree, graph, and collections for efficient multi-operation requests</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="1 4 1 10 7 10" />
-          <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
-        </svg>
-      </div>
-      <h3>Built-in Retry</h3>
-      <p>Exponential backoff with configurable retries for resilient operations</p>
-    </div>
-  </div>
+    </section>
 
-  <div class="main" style="margin-top: 0; padding-top: 0;">
-    <h2>Quick Example</h2>
-    <div class="code-block">
-      <div class="code-header">
-        <span>main.go</span>
-        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-      </div>
-      <pre><code><span class="keyword">package</span> main
+    <section class="example-section">
+      <h2>Quick Example</h2>
+      <div class="code-block">
+        <div class="code-header">
+          <span>main.go</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code><span class="keyword">package</span> main
 
 <span class="keyword">import</span> (
     <span class="string">"context"</span>
@@ -180,76 +187,77 @@
         fmt.<span class="function">Println</span>(record.<span class="function">StringField</span>(<span class="string">"Name"</span>))
     }
 }</code></pre>
-    </div>
+      </div>
 
-    <h2>Available Services</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Service</th>
-          <th>Description</th>
-          <th>Documentation</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><code>SObjects()</code></td>
-          <td>CRUD operations on Salesforce objects</td>
-          <td><a href="pages/sobjects.html">View Docs</a></td>
-        </tr>
-        <tr>
-          <td><code>Query()</code></td>
-          <td>SOQL queries with builder pattern</td>
-          <td><a href="pages/query.html">View Docs</a></td>
-        </tr>
-        <tr>
-          <td><code>Search()</code></td>
-          <td>SOSL search with builder pattern</td>
-          <td><a href="pages/search.html">View Docs</a></td>
-        </tr>
-        <tr>
-          <td><code>Bulk()</code></td>
-          <td>Bulk API 2.0 for large data operations</td>
-          <td><a href="pages/bulk.html">View Docs</a></td>
-        </tr>
-        <tr>
-          <td><code>Composite()</code></td>
-          <td>Batch, tree, graph, collections</td>
-          <td><a href="pages/composite.html">View Docs</a></td>
-        </tr>
-        <tr>
-          <td><code>Analytics()</code></td>
-          <td>Reports and Dashboards API</td>
-          <td><a href="pages/analytics.html">View Docs</a></td>
-        </tr>
-        <tr>
-          <td><code>Tooling()</code></td>
-          <td>Apex, tests, metadata, debug logs</td>
-          <td><a href="pages/tooling.html">View Docs</a></td>
-        </tr>
-        <tr>
-          <td><code>Chatter()</code></td>
-          <td>Feeds, users, files, groups</td>
-          <td><a href="pages/chatter.html">View Docs</a></td>
-        </tr>
-        <tr>
-          <td><code>UIAPI()</code></td>
-          <td>Records, layouts, picklists</td>
-          <td><a href="pages/uiapi.html">View Docs</a></td>
-        </tr>
-        <tr>
-          <td><code>Limits()</code></td>
-          <td>API limits monitoring</td>
-          <td><a href="pages/limits.html">View Docs</a></td>
-        </tr>
-        <tr>
-          <td><code>Apex()</code></td>
-          <td>Custom Apex REST endpoints</td>
-          <td><a href="pages/apex.html">View Docs</a></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+      <h2>Available Services</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Service</th>
+            <th>Description</th>
+            <th>Documentation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>SObjects()</code></td>
+            <td>CRUD operations on Salesforce objects</td>
+            <td><a href="pages/sobjects.html">View Docs</a></td>
+          </tr>
+          <tr>
+            <td><code>Query()</code></td>
+            <td>SOQL queries with builder pattern</td>
+            <td><a href="pages/query.html">View Docs</a></td>
+          </tr>
+          <tr>
+            <td><code>Search()</code></td>
+            <td>SOSL search with builder pattern</td>
+            <td><a href="pages/search.html">View Docs</a></td>
+          </tr>
+          <tr>
+            <td><code>Bulk()</code></td>
+            <td>Bulk API 2.0 for large data operations</td>
+            <td><a href="pages/bulk.html">View Docs</a></td>
+          </tr>
+          <tr>
+            <td><code>Composite()</code></td>
+            <td>Batch, tree, graph, collections</td>
+            <td><a href="pages/composite.html">View Docs</a></td>
+          </tr>
+          <tr>
+            <td><code>Analytics()</code></td>
+            <td>Reports and Dashboards API</td>
+            <td><a href="pages/analytics.html">View Docs</a></td>
+          </tr>
+          <tr>
+            <td><code>Tooling()</code></td>
+            <td>Apex, tests, metadata, debug logs</td>
+            <td><a href="pages/tooling.html">View Docs</a></td>
+          </tr>
+          <tr>
+            <td><code>Chatter()</code></td>
+            <td>Feeds, users, files, groups</td>
+            <td><a href="pages/chatter.html">View Docs</a></td>
+          </tr>
+          <tr>
+            <td><code>UIAPI()</code></td>
+            <td>Records, layouts, picklists</td>
+            <td><a href="pages/uiapi.html">View Docs</a></td>
+          </tr>
+          <tr>
+            <td><code>Limits()</code></td>
+            <td>API limits monitoring</td>
+            <td><a href="pages/limits.html">View Docs</a></td>
+          </tr>
+          <tr>
+            <td><code>Apex()</code></td>
+            <td>Custom Apex REST endpoints</td>
+            <td><a href="pages/apex.html">View Docs</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
 
   <footer class="footer">
     <p>Salesforce Go SDK v2.0.0 | <a href="https://github.com/PramithaMJ/salesforce">GitHub</a> | MIT License</p>

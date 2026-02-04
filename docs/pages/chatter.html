@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatter API - Salesforce Go SDK</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">⚡</div><a href="../index.html" style="color: inherit;">Salesforce Go SDK</a>
+        </div>
+        <nav class="header-nav"><a href="https://github.com/PramithaMJ/salesforce" target="_blank">GitHub</a></nav>
+    </header>
+    <aside class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-title">Getting Started</div>
+            <ul class="sidebar-links">
+                <li><a href="../index.html">Overview</a></li>
+                <li><a href="getting-started.html">Installation</a></li>
+                <li><a href="authentication.html">Authentication</a></li>
+            </ul>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-title">API Reference</div>
+            <ul class="sidebar-links">
+                <li><a href="sobjects.html">SObjects API</a></li>
+                <li><a href="query.html">Query (SOQL)</a></li>
+                <li><a href="search.html">Search (SOSL)</a></li>
+                <li><a href="bulk.html">Bulk API 2.0</a></li>
+                <li><a href="composite.html">Composite API</a></li>
+                <li><a href="analytics.html">Analytics</a></li>
+                <li><a href="tooling.html">Tooling API</a></li>
+                <li><a href="chatter.html" class="active">Chatter API</a></li>
+                <li><a href="uiapi.html">UI API</a></li>
+                <li><a href="limits.html">Limits</a></li>
+                <li><a href="apex.html">Apex REST</a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <main class="main">
+        <h1>Chatter API</h1>
+        <p>Access Salesforce Connect/Chatter for feeds, posts, and collaboration.</p>
+
+        <h2>Get News Feed</h2>
+        <div class="code-block">
+            <div class="code-header"><span>Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>feed, err := client.<span class="function">Chatter</span>().<span class="function">GetNewsFeed</span>(ctx)
+<span class="keyword">for</span> _, item := <span class="keyword">range</span> feed.Elements {
+    fmt.<span class="function">Printf</span>(<span class="string">"%s: %s\n"</span>, item.Actor.Name, item.Body.Text)
+}</code></pre>
+        </div>
+
+        <h2>Post to Feed</h2>
+        <div class="code-block">
+            <div class="code-header"><span>Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>post, err := client.<span class="function">Chatter</span>().<span class="function">PostFeedElement</span>(ctx, connect.FeedInput{
+    SubjectId: <span class="string">"me"</span>,  <span class="comment">// or user/group/record ID</span>
+    Body: connect.MessageBodyInput{
+        MessageSegments: []connect.MessageSegmentInput{
+            {Type: <span class="string">"Text"</span>, Text: <span class="string">"Hello from Go SDK!"</span>},
+        },
+    },
+})</code></pre>
+        </div>
+
+        <h2>Post Comment</h2>
+        <div class="code-block">
+            <div class="code-header"><span>Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>comment, _ := client.<span class="function">Chatter</span>().<span class="function">PostComment</span>(ctx, feedElementId, <span class="string">"Great post!"</span>)</code></pre>
+        </div>
+
+        <h2>Like a Post</h2>
+        <div class="code-block">
+            <div class="code-header"><span>Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>client.<span class="function">Chatter</span>().<span class="function">LikeFeedElement</span>(ctx, feedElementId)</code></pre>
+        </div>
+
+        <h2>User Profile</h2>
+        <div class="code-block">
+            <div class="code-header"><span>Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code><span class="comment">// Get current user</span>
+me, _ := client.<span class="function">Chatter</span>().<span class="function">GetCurrentUser</span>(ctx)
+fmt.<span class="function">Println</span>(<span class="string">"Welcome,"</span>, me.Name)
+
+<span class="comment">// Get any user</span>
+user, _ := client.<span class="function">Chatter</span>().<span class="function">GetUser</span>(ctx, userId)</code></pre>
+        </div>
+
+        <h2>Available Methods</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Method</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>GetNewsFeed()</code></td>
+                    <td>Get news feed</td>
+                </tr>
+                <tr>
+                    <td><code>GetRecordFeed()</code></td>
+                    <td>Get record feed</td>
+                </tr>
+                <tr>
+                    <td><code>PostFeedElement()</code></td>
+                    <td>Create a post</td>
+                </tr>
+                <tr>
+                    <td><code>PostComment()</code></td>
+                    <td>Comment on post</td>
+                </tr>
+                <tr>
+                    <td><code>LikeFeedElement()</code></td>
+                    <td>Like a post</td>
+                </tr>
+                <tr>
+                    <td><code>GetCurrentUser()</code></td>
+                    <td>Get current user</td>
+                </tr>
+                <tr>
+                    <td><code>GetUser()</code></td>
+                    <td>Get user profile</td>
+                </tr>
+                <tr>
+                    <td><code>GetGroups()</code></td>
+                    <td>List groups</td>
+                </tr>
+                <tr>
+                    <td><code>GetFiles()</code></td>
+                    <td>Get user files</td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+    <footer class="footer">
+        <p>Salesforce Go SDK v2.0.0 • <a href="https://github.com/PramithaMJ/salesforce">GitHub</a></p>
+    </footer>
+    <script src="../js/main.js"></script>
+</body>
+
+</html>

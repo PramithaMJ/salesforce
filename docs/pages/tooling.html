@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tooling API - Salesforce Go SDK</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">⚡</div><a href="../index.html" style="color: inherit;">Salesforce Go SDK</a>
+        </div>
+        <nav class="header-nav"><a href="https://github.com/PramithaMJ/salesforce" target="_blank">GitHub</a></nav>
+    </header>
+    <aside class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-title">Getting Started</div>
+            <ul class="sidebar-links">
+                <li><a href="../index.html">Overview</a></li>
+                <li><a href="getting-started.html">Installation</a></li>
+                <li><a href="authentication.html">Authentication</a></li>
+            </ul>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-title">API Reference</div>
+            <ul class="sidebar-links">
+                <li><a href="sobjects.html">SObjects API</a></li>
+                <li><a href="query.html">Query (SOQL)</a></li>
+                <li><a href="search.html">Search (SOSL)</a></li>
+                <li><a href="bulk.html">Bulk API 2.0</a></li>
+                <li><a href="composite.html">Composite API</a></li>
+                <li><a href="analytics.html">Analytics</a></li>
+                <li><a href="tooling.html" class="active">Tooling API</a></li>
+                <li><a href="chatter.html">Chatter API</a></li>
+                <li><a href="uiapi.html">UI API</a></li>
+                <li><a href="limits.html">Limits</a></li>
+                <li><a href="apex.html">Apex REST</a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <main class="main">
+        <h1>Tooling API</h1>
+        <p>Access Salesforce Tooling API for Apex development, testing, and metadata.</p>
+
+        <h2>Execute Anonymous Apex</h2>
+        <div class="code-block">
+            <div class="code-header"><span>Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>result, err := client.<span class="function">Tooling</span>().<span class="function">ExecuteAnonymous</span>(ctx, <span class="string">`
+    System.debug('Hello from Go SDK!');
+    Account acc = new Account(Name = 'Test');
+    insert acc;
+`</span>)
+
+<span class="keyword">if</span> result.Success {
+    fmt.<span class="function">Println</span>(<span class="string">"Execution successful"</span>)
+} <span class="keyword">else</span> {
+    fmt.<span class="function">Println</span>(<span class="string">"Error:"</span>, result.CompileProblem)
+}</code></pre>
+        </div>
+
+        <h2>Run Tests Asynchronously</h2>
+        <div class="code-block">
+            <div class="code-header"><span>Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>testRunId, err := client.<span class="function">Tooling</span>().<span class="function">RunTestsAsync</span>(ctx, tooling.TestRequest{
+    ClassIds: []<span class="type">string</span>{classId1, classId2},
+})
+
+<span class="comment">// Check test status</span>
+status, _ := client.<span class="function">Tooling</span>().<span class="function">GetTestRunStatus</span>(ctx, testRunId)</code></pre>
+        </div>
+
+        <h2>Query Tooling Objects</h2>
+        <div class="code-block">
+            <div class="code-header"><span>Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code><span class="comment">// Query Apex classes</span>
+result, _ := client.<span class="function">Tooling</span>().<span class="function">Query</span>(ctx, 
+    <span class="string">"SELECT Id, Name, Body FROM ApexClass LIMIT 10"</span>)
+
+<span class="comment">// Query Apex triggers</span>
+triggers, _ := client.<span class="function">Tooling</span>().<span class="function">Query</span>(ctx,
+    <span class="string">"SELECT Id, Name FROM ApexTrigger WHERE Status = 'Active'"</span>)</code></pre>
+        </div>
+
+        <h2>Get Debug Logs</h2>
+        <div class="code-block">
+            <div class="code-header"><span>Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>logs, _ := client.<span class="function">Tooling</span>().<span class="function">GetApexLogs</span>(ctx, <span class="number">10</span>)
+<span class="keyword">for</span> _, log := <span class="keyword">range</span> logs {
+    fmt.<span class="function">Printf</span>(<span class="string">"%s: %d bytes\n"</span>, log.Operation, log.LogLength)
+}
+
+<span class="comment">// Get log body</span>
+body, _ := client.<span class="function">Tooling</span>().<span class="function">GetLogBody</span>(ctx, logId)</code></pre>
+        </div>
+
+        <h2>Available Methods</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Method</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>Query()</code></td>
+                    <td>Query tooling objects</td>
+                </tr>
+                <tr>
+                    <td><code>ExecuteAnonymous()</code></td>
+                    <td>Execute anonymous Apex</td>
+                </tr>
+                <tr>
+                    <td><code>RunTestsAsync()</code></td>
+                    <td>Run unit tests async</td>
+                </tr>
+                <tr>
+                    <td><code>GetTestRunStatus()</code></td>
+                    <td>Get test run status</td>
+                </tr>
+                <tr>
+                    <td><code>GetApexLogs()</code></td>
+                    <td>List debug logs</td>
+                </tr>
+                <tr>
+                    <td><code>GetLogBody()</code></td>
+                    <td>Get log content</td>
+                </tr>
+                <tr>
+                    <td><code>GetCodeCompletion()</code></td>
+                    <td>Get Apex completions</td>
+                </tr>
+                <tr>
+                    <td><code>CreateApexClass()</code></td>
+                    <td>Create Apex class</td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+    <footer class="footer">
+        <p>Salesforce Go SDK v2.0.0 • <a href="https://github.com/PramithaMJ/salesforce">GitHub</a></p>
+    </footer>
+    <script src="../js/main.js"></script>
+</body>
+
+</html>

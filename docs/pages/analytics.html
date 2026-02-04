@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics API - Salesforce Go SDK</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">⚡</div><a href="../index.html" style="color: inherit;">Salesforce Go SDK</a>
+        </div>
+        <nav class="header-nav"><a href="https://github.com/PramithaMJ/salesforce" target="_blank">GitHub</a></nav>
+    </header>
+    <aside class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-title">Getting Started</div>
+            <ul class="sidebar-links">
+                <li><a href="../index.html">Overview</a></li>
+                <li><a href="getting-started.html">Installation</a></li>
+                <li><a href="authentication.html">Authentication</a></li>
+            </ul>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-title">API Reference</div>
+            <ul class="sidebar-links">
+                <li><a href="sobjects.html">SObjects API</a></li>
+                <li><a href="query.html">Query (SOQL)</a></li>
+                <li><a href="search.html">Search (SOSL)</a></li>
+                <li><a href="bulk.html">Bulk API 2.0</a></li>
+                <li><a href="composite.html">Composite API</a></li>
+                <li><a href="analytics.html" class="active">Analytics</a></li>
+                <li><a href="tooling.html">Tooling API</a></li>
+                <li><a href="chatter.html">Chatter API</a></li>
+                <li><a href="uiapi.html">UI API</a></li>
+                <li><a href="limits.html">Limits</a></li>
+                <li><a href="apex.html">Apex REST</a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <main class="main">
+        <h1>Analytics API</h1>
+        <p>Access Salesforce Reports and Dashboards programmatically.</p>
+
+        <h2>List Reports</h2>
+        <div class="code-block">
+            <div class="code-header"><span>Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>reports, err := client.<span class="function">Analytics</span>().<span class="function">ListReports</span>(ctx)
+<span class="keyword">for</span> _, report := <span class="keyword">range</span> reports {
+    fmt.<span class="function">Printf</span>(<span class="string">"%s: %s\n"</span>, report.Name, report.ID)
+}</code></pre>
+        </div>
+
+        <h2>Run Report (Synchronous)</h2>
+        <div class="code-block">
+            <div class="code-header"><span>Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>result, err := client.<span class="function">Analytics</span>().<span class="function">RunReport</span>(ctx, reportID, <span class="keyword">true</span>)  <span class="comment">// includeDetails=true</span>
+fmt.<span class="function">Println</span>(<span class="string">"Total:"</span>, result.FactMap.GrandTotal)</code></pre>
+        </div>
+
+        <h2>Run Report (Async)</h2>
+        <div class="code-block">
+            <div class="code-header"><span>Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>instance, _ := client.<span class="function">Analytics</span>().<span class="function">RunReportAsync</span>(ctx, reportID)
+<span class="comment">// Poll for completion</span>
+result, _ := client.<span class="function">Analytics</span>().<span class="function">GetReportInstance</span>(ctx, reportID, instance.ID)</code></pre>
+        </div>
+
+        <h2>List Dashboards</h2>
+        <div class="code-block">
+            <div class="code-header"><span>Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>dashboards, err := client.<span class="function">Analytics</span>().<span class="function">ListDashboards</span>(ctx)
+<span class="keyword">for</span> _, dash := <span class="keyword">range</span> dashboards {
+    fmt.<span class="function">Printf</span>(<span class="string">"%s (Folder: %s)\n"</span>, dash.Name, dash.FolderName)
+}</code></pre>
+        </div>
+
+        <h2>Available Methods</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Method</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>ListReports()</code></td>
+                    <td>List all reports</td>
+                </tr>
+                <tr>
+                    <td><code>GetReport()</code></td>
+                    <td>Get report metadata</td>
+                </tr>
+                <tr>
+                    <td><code>RunReport()</code></td>
+                    <td>Run report synchronously</td>
+                </tr>
+                <tr>
+                    <td><code>RunReportAsync()</code></td>
+                    <td>Run report asynchronously</td>
+                </tr>
+                <tr>
+                    <td><code>GetReportInstance()</code></td>
+                    <td>Get async results</td>
+                </tr>
+                <tr>
+                    <td><code>ListDashboards()</code></td>
+                    <td>List dashboards</td>
+                </tr>
+                <tr>
+                    <td><code>GetDashboard()</code></td>
+                    <td>Get dashboard details</td>
+                </tr>
+                <tr>
+                    <td><code>RefreshDashboard()</code></td>
+                    <td>Refresh dashboard data</td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+    <footer class="footer">
+        <p>Salesforce Go SDK v2.0.0 • <a href="https://github.com/PramithaMJ/salesforce">GitHub</a></p>
+    </footer>
+    <script src="../js/main.js"></script>
+</body>
+
+</html>

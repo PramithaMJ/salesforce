@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication - Salesforce Go SDK</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">⚡</div>
+            <a href="../index.html" style="color: inherit;">Salesforce Go SDK</a>
+        </div>
+        <nav class="header-nav">
+            <a href="https://github.com/PramithaMJ/salesforce" target="_blank">GitHub</a>
+        </nav>
+    </header>
+
+    <aside class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-title">Getting Started</div>
+            <ul class="sidebar-links">
+                <li><a href="../index.html">Overview</a></li>
+                <li><a href="getting-started.html">Installation</a></li>
+                <li><a href="authentication.html" class="active">Authentication</a></li>
+            </ul>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-title">API Reference</div>
+            <ul class="sidebar-links">
+                <li><a href="sobjects.html">SObjects API</a></li>
+                <li><a href="query.html">Query (SOQL)</a></li>
+                <li><a href="search.html">Search (SOSL)</a></li>
+                <li><a href="bulk.html">Bulk API 2.0</a></li>
+                <li><a href="composite.html">Composite API</a></li>
+                <li><a href="analytics.html">Analytics</a></li>
+                <li><a href="tooling.html">Tooling API</a></li>
+                <li><a href="chatter.html">Chatter API</a></li>
+                <li><a href="uiapi.html">UI API</a></li>
+                <li><a href="limits.html">Limits</a></li>
+                <li><a href="apex.html">Apex REST</a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <main class="main">
+        <h1>Authentication</h1>
+        <p>The SDK supports multiple authentication methods to connect to Salesforce.</p>
+
+        <h2>OAuth 2.0 Refresh Token</h2>
+        <p>The recommended method for production applications. Uses a refresh token to obtain access tokens
+            automatically.</p>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>client, err := salesforce.<span class="function">NewClient</span>(
+    salesforce.<span class="function">WithOAuthRefresh</span>(
+        <span class="string">"your_client_id"</span>,
+        <span class="string">"your_client_secret"</span>,
+        <span class="string">"your_refresh_token"</span>,
+    ),
+)
+<span class="keyword">if</span> err != <span class="keyword">nil</span> {
+    log.<span class="function">Fatal</span>(err)
+}
+
+<span class="comment">// Connect authenticates and obtains access token</span>
+err = client.<span class="function">Connect</span>(ctx)</code></pre>
+        </div>
+
+        <div class="alert alert-info">
+            <strong>Tip:</strong> To obtain a refresh token, use the OAuth 2.0 Web Server Flow in your Connected App.
+        </div>
+
+        <h2>Username-Password Flow</h2>
+        <p>Simple authentication using username and password. Suitable for server-to-server integrations.</p>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>client, err := salesforce.<span class="function">NewClient</span>(
+    salesforce.<span class="function">WithCredentials</span>(
+        <span class="string">"your_client_id"</span>,
+        <span class="string">"your_client_secret"</span>,
+    ),
+    salesforce.<span class="function">WithPasswordAuth</span>(
+        <span class="string">"username@example.com"</span>,
+        <span class="string">"password"</span>,
+        <span class="string">"security_token"</span>,
+    ),
+)
+
+err = client.<span class="function">Connect</span>(ctx)</code></pre>
+        </div>
+
+        <div class="alert alert-warning">
+            <strong>Note:</strong> The password must be concatenated with the security token. Get your security token
+            from Salesforce Setup → My Personal Information → Reset Security Token.
+        </div>
+
+        <h2>Direct Access Token</h2>
+        <p>Use an existing access token directly. Useful when you manage tokens externally.</p>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>client, err := salesforce.<span class="function">NewClient</span>(
+    salesforce.<span class="function">WithAccessToken</span>(
+        <span class="string">"your_access_token"</span>,
+        <span class="string">"https://yourinstance.salesforce.com"</span>,
+    ),
+)
+
+<span class="comment">// No Connect() needed - set token directly</span>
+client.<span class="function">SetAccessToken</span>(accessToken, instanceURL)</code></pre>
+        </div>
+
+        <h2>Sandbox Environment</h2>
+        <p>Connect to a Salesforce sandbox instead of production:</p>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>client, err := salesforce.<span class="function">NewClient</span>(
+    salesforce.<span class="function">WithOAuthRefresh</span>(clientID, clientSecret, refreshToken),
+    salesforce.<span class="function">WithSandbox</span>(),  <span class="comment">// Uses test.salesforce.com</span>
+)</code></pre>
+        </div>
+
+        <h2>Custom Domain (My Domain)</h2>
+        <p>Connect using a Salesforce My Domain:</p>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>client, err := salesforce.<span class="function">NewClient</span>(
+    salesforce.<span class="function">WithOAuthRefresh</span>(clientID, clientSecret, refreshToken),
+    salesforce.<span class="function">WithCustomDomain</span>(<span class="string">"mycompany"</span>),
+    <span class="comment">// Uses https://mycompany.my.salesforce.com</span>
+)</code></pre>
+        </div>
+
+        <h2>Token Refresh</h2>
+        <p>Manually refresh the access token when needed:</p>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code><span class="comment">// Refresh token programmatically</span>
+err := client.<span class="function">RefreshToken</span>(ctx)
+<span class="keyword">if</span> err != <span class="keyword">nil</span> {
+    log.<span class="function">Println</span>(<span class="string">"Token refresh failed:"</span>, err)
+}
+
+<span class="comment">// Get current token info</span>
+token := client.<span class="function">GetToken</span>()
+fmt.<span class="function">Println</span>(<span class="string">"Instance URL:"</span>, token.InstanceURL)
+fmt.<span class="function">Println</span>(<span class="string">"Expires at:"</span>, token.ExpiresAt)</code></pre>
+        </div>
+
+        <h2>Connected App Setup</h2>
+        <p>To use OAuth authentication, create a Connected App in Salesforce:</p>
+        <ol style="color: var(--text-secondary); margin-left: 20px; line-height: 2;">
+            <li>Go to Setup → App Manager → New Connected App</li>
+            <li>Enable OAuth Settings</li>
+            <li>Add callback URL (for web flow)</li>
+            <li>Select OAuth scopes: <code>api</code>, <code>refresh_token</code>, <code>offline_access</code></li>
+            <li>Save and note the Consumer Key (Client ID) and Consumer Secret</li>
+        </ol>
+    </main>
+
+    <footer class="footer">
+        <p>Salesforce Go SDK v2.0.0 • <a href="https://github.com/PramithaMJ/salesforce">GitHub</a> • MIT License</p>
+    </footer>
+
+    <script src="../js/main.js"></script>
+</body>
+
+</html>

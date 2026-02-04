@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UI API - Salesforce Go SDK</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">⚡</div><a href="../index.html" style="color: inherit;">Salesforce Go SDK</a>
+        </div>
+        <nav class="header-nav"><a href="https://github.com/PramithaMJ/salesforce" target="_blank">GitHub</a></nav>
+    </header>
+    <aside class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-title">Getting Started</div>
+            <ul class="sidebar-links">
+                <li><a href="../index.html">Overview</a></li>
+                <li><a href="getting-started.html">Installation</a></li>
+                <li><a href="authentication.html">Authentication</a></li>
+            </ul>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-title">API Reference</div>
+            <ul class="sidebar-links">
+                <li><a href="sobjects.html">SObjects API</a></li>
+                <li><a href="query.html">Query (SOQL)</a></li>
+                <li><a href="search.html">Search (SOSL)</a></li>
+                <li><a href="bulk.html">Bulk API 2.0</a></li>
+                <li><a href="composite.html">Composite API</a></li>
+                <li><a href="analytics.html">Analytics</a></li>
+                <li><a href="tooling.html">Tooling API</a></li>
+                <li><a href="chatter.html">Chatter API</a></li>
+                <li><a href="uiapi.html" class="active">UI API</a></li>
+                <li><a href="limits.html">Limits</a></li>
+                <li><a href="apex.html">Apex REST</a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <main class="main">
+        <h1>UI API</h1>
+        <p>Access User Interface API for record layouts, picklists, and object metadata.</p>
+
+        <h2>Get Record UI</h2>
+        <div class="code-block">
+            <div class="code-header"><span>Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>ui, err := client.<span class="function">UIAPI</span>().<span class="function">GetRecordUI</span>(ctx, recordId, uiapi.FormFactor{
+    FormFactor: <span class="string">"Large"</span>,
+    Modes:      []<span class="type">string</span>{<span class="string">"View"</span>, <span class="string">"Edit"</span>},
+})
+<span class="comment">// Access layout, object info, record data in one call</span></code></pre>
+        </div>
+
+        <h2>Get Layout</h2>
+        <div class="code-block">
+            <div class="code-header"><span>Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>layout, err := client.<span class="function">UIAPI</span>().<span class="function">GetLayout</span>(ctx, <span class="string">"Account"</span>, <span class="string">"Full"</span>)
+<span class="keyword">for</span> _, section := <span class="keyword">range</span> layout.Sections {
+    fmt.<span class="function">Println</span>(<span class="string">"Section:"</span>, section.Heading)
+}</code></pre>
+        </div>
+
+        <h2>Get Picklist Values</h2>
+        <div class="code-block">
+            <div class="code-header"><span>Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>picklist, err := client.<span class="function">UIAPI</span>().<span class="function">GetPicklistValues</span>(ctx, <span class="string">"Account"</span>, <span class="string">"Industry"</span>)
+<span class="keyword">for</span> _, val := <span class="keyword">range</span> picklist.Values {
+    fmt.<span class="function">Printf</span>(<span class="string">"%s (%s)\n"</span>, val.Label, val.Value)
+}</code></pre>
+        </div>
+
+        <h2>Get Object Info</h2>
+        <div class="code-block">
+            <div class="code-header"><span>Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>info, _ := client.<span class="function">UIAPI</span>().<span class="function">GetObjectInfo</span>(ctx, <span class="string">"Account"</span>)
+fmt.<span class="function">Printf</span>(<span class="string">"Label: %s, Plural: %s\n"</span>, info.Label, info.LabelPlural)</code></pre>
+        </div>
+
+        <h2>Available Methods</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Method</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>GetRecordUI()</code></td>
+                    <td>Get complete record UI</td>
+                </tr>
+                <tr>
+                    <td><code>GetRecord()</code></td>
+                    <td>Get record via UI API</td>
+                </tr>
+                <tr>
+                    <td><code>GetLayout()</code></td>
+                    <td>Get page layout</td>
+                </tr>
+                <tr>
+                    <td><code>GetPicklistValues()</code></td>
+                    <td>Get picklist values</td>
+                </tr>
+                <tr>
+                    <td><code>GetObjectInfo()</code></td>
+                    <td>Get object metadata</td>
+                </tr>
+                <tr>
+                    <td><code>GetRecordCreateDefaults()</code></td>
+                    <td>Get create defaults</td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+    <footer class="footer">
+        <p>Salesforce Go SDK v2.0.0 • <a href="https://github.com/PramithaMJ/salesforce">GitHub</a></p>
+    </footer>
+    <script src="../js/main.js"></script>
+</body>
+
+</html>

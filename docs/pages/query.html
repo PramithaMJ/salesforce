@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Query (SOQL) - Salesforce Go SDK</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">⚡</div>
+            <a href="../index.html" style="color: inherit;">Salesforce Go SDK</a>
+        </div>
+        <nav class="header-nav">
+            <a href="https://github.com/PramithaMJ/salesforce" target="_blank">GitHub</a>
+        </nav>
+    </header>
+
+    <aside class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-title">Getting Started</div>
+            <ul class="sidebar-links">
+                <li><a href="../index.html">Overview</a></li>
+                <li><a href="getting-started.html">Installation</a></li>
+                <li><a href="authentication.html">Authentication</a></li>
+            </ul>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-title">API Reference</div>
+            <ul class="sidebar-links">
+                <li><a href="sobjects.html">SObjects API</a></li>
+                <li><a href="query.html" class="active">Query (SOQL)</a></li>
+                <li><a href="search.html">Search (SOSL)</a></li>
+                <li><a href="bulk.html">Bulk API 2.0</a></li>
+                <li><a href="composite.html">Composite API</a></li>
+                <li><a href="analytics.html">Analytics</a></li>
+                <li><a href="tooling.html">Tooling API</a></li>
+                <li><a href="chatter.html">Chatter API</a></li>
+                <li><a href="uiapi.html">UI API</a></li>
+                <li><a href="limits.html">Limits</a></li>
+                <li><a href="apex.html">Apex REST</a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <main class="main">
+        <h1>Query (SOQL)</h1>
+        <p>Execute SOQL queries with pagination support and a fluent query builder.</p>
+
+        <h2>Execute Query</h2>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>result, err := client.<span class="function">Query</span>().<span class="function">Execute</span>(ctx, 
+    <span class="string">"SELECT Id, Name, Industry FROM Account WHERE Industry = 'Technology' LIMIT 10"</span>)
+
+<span class="keyword">if</span> err != <span class="keyword">nil</span> {
+    log.<span class="function">Fatal</span>(err)
+}
+
+fmt.<span class="function">Printf</span>(<span class="string">"Total: %d records\n"</span>, result.TotalSize)
+
+<span class="keyword">for</span> _, record := <span class="keyword">range</span> result.Records {
+    fmt.<span class="function">Printf</span>(<span class="string">"%s - %s\n"</span>, 
+        record.<span class="function">StringField</span>(<span class="string">"Name"</span>),
+        record.<span class="function">StringField</span>(<span class="string">"Industry"</span>))
+}</code></pre>
+        </div>
+
+        <h2>Query Builder</h2>
+        <p>Build queries programmatically with the fluent builder pattern:</p>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code><span class="comment">// Build a complex query</span>
+query := client.<span class="function">Query</span>().<span class="function">NewBuilder</span>(<span class="string">"Contact"</span>).
+    <span class="function">Select</span>(<span class="string">"Id"</span>, <span class="string">"FirstName"</span>, <span class="string">"LastName"</span>, <span class="string">"Email"</span>).
+    <span class="function">WhereEquals</span>(<span class="string">"AccountId"</span>, accountID).
+    <span class="function">WhereNotNull</span>(<span class="string">"Email"</span>).
+    <span class="function">OrderByAsc</span>(<span class="string">"LastName"</span>).
+    <span class="function">Limit</span>(<span class="number">50</span>).
+    <span class="function">Build</span>()
+
+result, err := client.<span class="function">Query</span>().<span class="function">Execute</span>(ctx, query)</code></pre>
+        </div>
+
+        <h2>Query All Records</h2>
+        <p>Automatically handle pagination to retrieve all records:</p>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code><span class="comment">// Fetch all records (handles pagination automatically)</span>
+allRecords, err := client.<span class="function">Query</span>().<span class="function">ExecuteAllRecords</span>(ctx, 
+    <span class="string">"SELECT Id, Name FROM Account WHERE Industry = 'Technology'"</span>)
+
+fmt.<span class="function">Printf</span>(<span class="string">"Total records: %d\n"</span>, <span class="function">len</span>(allRecords))</code></pre>
+        </div>
+
+        <h2>Manual Pagination</h2>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>result, _ := client.<span class="function">Query</span>().<span class="function">Execute</span>(ctx, <span class="string">"SELECT Id FROM Account"</span>)
+
+<span class="comment">// Check if more records exist</span>
+<span class="keyword">for</span> !result.Done {
+    <span class="comment">// Process current batch</span>
+    <span class="keyword">for</span> _, r := <span class="keyword">range</span> result.Records {
+        <span class="comment">// process record</span>
+    }
+    
+    <span class="comment">// Get next batch</span>
+    result, _ = client.<span class="function">Query</span>().<span class="function">QueryMore</span>(ctx, result.NextRecordsURL)
+}</code></pre>
+        </div>
+
+        <h2>Query with Callback</h2>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code><span class="comment">// Process records in batches with a callback</span>
+err := client.<span class="function">Query</span>().<span class="function">ExecuteWithCallback</span>(ctx, 
+    <span class="string">"SELECT Id, Name FROM Account"</span>,
+    <span class="keyword">func</span>(records []<span class="type">types.Record</span>) <span class="type">error</span> {
+        <span class="keyword">for</span> _, r := <span class="keyword">range</span> records {
+            fmt.<span class="function">Println</span>(r.<span class="function">StringField</span>(<span class="string">"Name"</span>))
+        }
+        <span class="keyword">return</span> <span class="keyword">nil</span>
+    },
+)</code></pre>
+        </div>
+
+        <h2>Builder Methods</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Method</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>Select(fields...)</code></td>
+                    <td>Fields to retrieve</td>
+                </tr>
+                <tr>
+                    <td><code>WhereEquals(field, value)</code></td>
+                    <td>Equality condition</td>
+                </tr>
+                <tr>
+                    <td><code>WhereIn(field, values)</code></td>
+                    <td>IN clause</td>
+                </tr>
+                <tr>
+                    <td><code>WhereLike(field, pattern)</code></td>
+                    <td>LIKE condition</td>
+                </tr>
+                <tr>
+                    <td><code>WhereNotNull(field)</code></td>
+                    <td>NOT NULL check</td>
+                </tr>
+                <tr>
+                    <td><code>WhereRaw(condition)</code></td>
+                    <td>Raw WHERE clause</td>
+                </tr>
+                <tr>
+                    <td><code>OrderByAsc(field)</code></td>
+                    <td>Ascending order</td>
+                </tr>
+                <tr>
+                    <td><code>OrderByDesc(field)</code></td>
+                    <td>Descending order</td>
+                </tr>
+                <tr>
+                    <td><code>Limit(n)</code></td>
+                    <td>Maximum records</td>
+                </tr>
+                <tr>
+                    <td><code>Offset(n)</code></td>
+                    <td>Skip records</td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+
+    <footer class="footer">
+        <p>Salesforce Go SDK v2.0.0 • <a href="https://github.com/PramithaMJ/salesforce">GitHub</a> • MIT License</p>
+    </footer>
+
+    <script src="../js/main.js"></script>
+</body>
+
+</html>

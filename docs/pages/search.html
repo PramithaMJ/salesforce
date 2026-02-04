@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search (SOSL) - Salesforce Go SDK</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">⚡</div>
+            <a href="../index.html" style="color: inherit;">Salesforce Go SDK</a>
+        </div>
+        <nav class="header-nav">
+            <a href="https://github.com/PramithaMJ/salesforce" target="_blank">GitHub</a>
+        </nav>
+    </header>
+
+    <aside class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-title">Getting Started</div>
+            <ul class="sidebar-links">
+                <li><a href="../index.html">Overview</a></li>
+                <li><a href="getting-started.html">Installation</a></li>
+                <li><a href="authentication.html">Authentication</a></li>
+            </ul>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-title">API Reference</div>
+            <ul class="sidebar-links">
+                <li><a href="sobjects.html">SObjects API</a></li>
+                <li><a href="query.html">Query (SOQL)</a></li>
+                <li><a href="search.html" class="active">Search (SOSL)</a></li>
+                <li><a href="bulk.html">Bulk API 2.0</a></li>
+                <li><a href="composite.html">Composite API</a></li>
+                <li><a href="analytics.html">Analytics</a></li>
+                <li><a href="tooling.html">Tooling API</a></li>
+                <li><a href="chatter.html">Chatter API</a></li>
+                <li><a href="uiapi.html">UI API</a></li>
+                <li><a href="limits.html">Limits</a></li>
+                <li><a href="apex.html">Apex REST</a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <main class="main">
+        <h1>Search (SOSL)</h1>
+        <p>Execute SOSL searches across multiple objects with a fluent search builder.</p>
+
+        <h2>Execute Search</h2>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>result, err := client.<span class="function">Search</span>().<span class="function">Execute</span>(ctx, 
+    <span class="string">"FIND {Acme} IN NAME FIELDS RETURNING Account(Id, Name), Contact(Id, Name)"</span>)
+
+<span class="keyword">if</span> err != <span class="keyword">nil</span> {
+    log.<span class="function">Fatal</span>(err)
+}
+
+<span class="keyword">for</span> _, record := <span class="keyword">range</span> result.SearchRecords {
+    fmt.<span class="function">Printf</span>(<span class="string">"Found: %s (ID: %s)\n"</span>, record.Name, record.ID)
+}</code></pre>
+        </div>
+
+        <h2>Search Builder</h2>
+        <p>Build searches programmatically:</p>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code><span class="comment">// Build a SOSL search query</span>
+sosl := search.<span class="function">NewBuilder</span>(<span class="string">"Acme"</span>).
+    <span class="function">In</span>(<span class="string">"NAME"</span>).
+    <span class="function">ReturningWithFields</span>(<span class="string">"Account"</span>, <span class="string">"Id"</span>, <span class="string">"Name"</span>, <span class="string">"Industry"</span>).
+    <span class="function">ReturningWithFields</span>(<span class="string">"Contact"</span>, <span class="string">"Id"</span>, <span class="string">"FirstName"</span>, <span class="string">"LastName"</span>).
+    <span class="function">Limit</span>(<span class="number">20</span>).
+    <span class="function">Build</span>()
+
+result, err := client.<span class="function">Search</span>().<span class="function">Execute</span>(ctx, sosl)</code></pre>
+        </div>
+
+        <h2>Parameterized Search</h2>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>result, err := client.<span class="function">Search</span>().<span class="function">Parameterized</span>(ctx, search.ParameterizedSearchRequest{
+    Query:  <span class="string">"Acme"</span>,
+    Fields: []<span class="type">string</span>{<span class="string">"Name"</span>, <span class="string">"Phone"</span>},
+    SObjects: []search.SObjSpec{
+        {Name: <span class="string">"Account"</span>, Fields: []<span class="type">string</span>{<span class="string">"Id"</span>, <span class="string">"Name"</span>}},
+        {Name: <span class="string">"Contact"</span>, Fields: []<span class="type">string</span>{<span class="string">"Id"</span>, <span class="string">"Email"</span>}},
+    },
+    Limit: <span class="number">50</span>,
+})</code></pre>
+        </div>
+
+        <h2>Search Scope Options</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Scope</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>ALL</code></td>
+                    <td>Search all fields</td>
+                </tr>
+                <tr>
+                    <td><code>NAME</code></td>
+                    <td>Search name fields only</td>
+                </tr>
+                <tr>
+                    <td><code>EMAIL</code></td>
+                    <td>Search email fields only</td>
+                </tr>
+                <tr>
+                    <td><code>PHONE</code></td>
+                    <td>Search phone fields only</td>
+                </tr>
+                <tr>
+                    <td><code>SIDEBAR</code></td>
+                    <td>Sidebar search scope</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Builder Methods</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Method</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>In(scope)</code></td>
+                    <td>Set search scope</td>
+                </tr>
+                <tr>
+                    <td><code>Returning(objects...)</code></td>
+                    <td>Objects to return</td>
+                </tr>
+                <tr>
+                    <td><code>ReturningWithFields(obj, fields...)</code></td>
+                    <td>Object with specific fields</td>
+                </tr>
+                <tr>
+                    <td><code>WithDivision(division)</code></td>
+                    <td>Filter by division</td>
+                </tr>
+                <tr>
+                    <td><code>Limit(n)</code></td>
+                    <td>Maximum results</td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+
+    <footer class="footer">
+        <p>Salesforce Go SDK v2.0.0 • <a href="https://github.com/PramithaMJ/salesforce">GitHub</a> • MIT License</p>
+    </footer>
+
+    <script src="../js/main.js"></script>
+</body>
+
+</html>

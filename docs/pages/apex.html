@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apex REST - Salesforce Go SDK</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">⚡</div><a href="../index.html" style="color: inherit;">Salesforce Go SDK</a>
+        </div>
+        <nav class="header-nav"><a href="https://github.com/PramithaMJ/salesforce" target="_blank">GitHub</a></nav>
+    </header>
+    <aside class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-title">Getting Started</div>
+            <ul class="sidebar-links">
+                <li><a href="../index.html">Overview</a></li>
+                <li><a href="getting-started.html">Installation</a></li>
+                <li><a href="authentication.html">Authentication</a></li>
+            </ul>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-title">API Reference</div>
+            <ul class="sidebar-links">
+                <li><a href="sobjects.html">SObjects API</a></li>
+                <li><a href="query.html">Query (SOQL)</a></li>
+                <li><a href="search.html">Search (SOSL)</a></li>
+                <li><a href="bulk.html">Bulk API 2.0</a></li>
+                <li><a href="composite.html">Composite API</a></li>
+                <li><a href="analytics.html">Analytics</a></li>
+                <li><a href="tooling.html">Tooling API</a></li>
+                <li><a href="chatter.html">Chatter API</a></li>
+                <li><a href="uiapi.html">UI API</a></li>
+                <li><a href="limits.html">Limits</a></li>
+                <li><a href="apex.html" class="active">Apex REST</a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <main class="main">
+        <h1>Apex REST</h1>
+        <p>Call custom Apex REST endpoints.</p>
+
+        <h2>GET Request</h2>
+        <div class="code-block">
+            <div class="code-header"><span>Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code><span class="keyword">var</span> result MyResponse
+err := client.<span class="function">Apex</span>().<span class="function">GetJSON</span>(ctx, <span class="string">"/MyService/v1/accounts"</span>, &result)
+fmt.<span class="function">Println</span>(<span class="string">"Data:"</span>, result.Data)</code></pre>
+        </div>
+
+        <h2>POST Request</h2>
+        <div class="code-block">
+            <div class="code-header"><span>Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>request := <span class="keyword">map</span>[<span class="type">string</span>]<span class="keyword">interface</span>{}{
+    <span class="string">"name"</span>: <span class="string">"New Account"</span>,
+    <span class="string">"type"</span>: <span class="string">"Customer"</span>,
+}
+
+<span class="keyword">var</span> response CreateResponse
+err := client.<span class="function">Apex</span>().<span class="function">PostJSON</span>(ctx, <span class="string">"/MyService/v1/accounts"</span>, request, &response)</code></pre>
+        </div>
+
+        <h2>Raw Response</h2>
+        <div class="code-block">
+            <div class="code-header"><span>Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code><span class="comment">// Get raw bytes</span>
+body, err := client.<span class="function">Apex</span>().<span class="function">Get</span>(ctx, <span class="string">"/MyService/v1/data"</span>)
+
+<span class="comment">// Post raw bytes</span>
+body, err := client.<span class="function">Apex</span>().<span class="function">Post</span>(ctx, <span class="string">"/MyService/v1/process"</span>, myData)</code></pre>
+        </div>
+
+        <h2>PATCH / PUT / DELETE</h2>
+        <div class="code-block">
+            <div class="code-header"><span>Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code><span class="comment">// PATCH</span>
+body, _ := client.<span class="function">Apex</span>().<span class="function">Patch</span>(ctx, <span class="string">"/Accounts/123"</span>, updateData)
+
+<span class="comment">// PUT</span>
+body, _ := client.<span class="function">Apex</span>().<span class="function">Put</span>(ctx, <span class="string">"/Accounts/123"</span>, replaceData)
+
+<span class="comment">// DELETE</span>
+body, _ := client.<span class="function">Apex</span>().<span class="function">Delete</span>(ctx, <span class="string">"/Accounts/123"</span>)</code></pre>
+        </div>
+
+        <h2>Apex REST Service Example</h2>
+        <div class="code-block">
+            <div class="code-header"><span>Apex</span><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code><span class="keyword">@RestResource</span>(urlMapping=<span class="string">'/MyService/v1/*'</span>)
+<span class="keyword">global class</span> <span class="type">MyRestService</span> {
+    <span class="keyword">@HttpGet</span>
+    <span class="keyword">global static</span> <span class="type">String</span> <span class="function">doGet</span>() {
+        <span class="keyword">return</span> <span class="string">'Hello from Apex!'</span>;
+    }
+    
+    <span class="keyword">@HttpPost</span>
+    <span class="keyword">global static</span> <span class="type">String</span> <span class="function">doPost</span>(<span class="type">String</span> name) {
+        <span class="keyword">return</span> <span class="string">'Created: '</span> + name;
+    }
+}</code></pre>
+        </div>
+
+        <h2>Available Methods</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Method</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>Get()</code></td>
+                    <td>GET request, returns bytes</td>
+                </tr>
+                <tr>
+                    <td><code>GetJSON()</code></td>
+                    <td>GET with JSON unmarshal</td>
+                </tr>
+                <tr>
+                    <td><code>Post()</code></td>
+                    <td>POST request, returns bytes</td>
+                </tr>
+                <tr>
+                    <td><code>PostJSON()</code></td>
+                    <td>POST with JSON marshal/unmarshal</td>
+                </tr>
+                <tr>
+                    <td><code>Patch()</code></td>
+                    <td>PATCH request</td>
+                </tr>
+                <tr>
+                    <td><code>Put()</code></td>
+                    <td>PUT request</td>
+                </tr>
+                <tr>
+                    <td><code>Delete()</code></td>
+                    <td>DELETE request</td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+    <footer class="footer">
+        <p>Salesforce Go SDK v2.0.0 • <a href="https://github.com/PramithaMJ/salesforce">GitHub</a></p>
+    </footer>
+    <script src="../js/main.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error Handling - Salesforce Go SDK</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">⚡</div><a href="../index.html" style="color: inherit;">Salesforce Go SDK</a>
+        </div>
+        <nav class="header-nav"><a href="https://github.com/PramithaMJ/salesforce" target="_blank">GitHub</a></nav>
+    </header>
+    <aside class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-title">Getting Started</div>
+            <ul class="sidebar-links">
+                <li><a href="../index.html">Overview</a></li>
+                <li><a href="getting-started.html">Installation</a></li>
+                <li><a href="authentication.html">Authentication</a></li>
+            </ul>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-title">API Reference</div>
+            <ul class="sidebar-links">
+                <li><a href="sobjects.html">SObjects API</a></li>
+                <li><a href="query.html">Query (SOQL)</a></li>
+                <li><a href="search.html">Search (SOSL)</a></li>
+                <li><a href="bulk.html">Bulk API 2.0</a></li>
+                <li><a href="composite.html">Composite API</a></li>
+                <li><a href="analytics.html">Analytics</a></li>
+                <li><a href="tooling.html">Tooling API</a></li>
+                <li><a href="chatter.html">Chatter API</a></li>
+                <li><a href="uiapi.html">UI API</a></li>
+                <li><a href="limits.html">Limits</a></li>
+                <li><a href="apex.html">Apex REST</a></li>
+            </ul>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-title">Resources</div>
+            <ul class="sidebar-links">
+                <li><a href="examples.html">Examples</a></li>
+                <li><a href="errors.html" class="active">Error Handling</a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <main class="main">
+        <h1>Error Handling</h1>
+        <p>Handle Salesforce API errors gracefully with typed error checking.</p>
+
+        <h2>Error Types</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Error Type</th>
+                    <th>Description</th>
+                    <th>Helper Function</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>APIError</code></td>
+                    <td>General API errors</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td><code>AuthError</code></td>
+                    <td>Authentication failures</td>
+                    <td><code>IsAuthError()</code></td>
+                </tr>
+                <tr>
+                    <td><code>NotFoundError</code></td>
+                    <td>Record not found (404)</td>
+                    <td><code>IsNotFoundError()</code></td>
+                </tr>
+                <tr>
+                    <td><code>RateLimitError</code></td>
+                    <td>API limit exceeded</td>
+                    <td><code>IsRateLimitError()</code></td>
+                </tr>
+                <tr>
+                    <td><code>ValidationError</code></td>
+                    <td>Field validation failed</td>
+                    <td><code>IsValidationError()</code></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Basic Error Handling</h2>
+        <div class="code-block">
+            <div class="code-header"><span>Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>record, err := client.<span class="function">SObjects</span>().<span class="function">Get</span>(ctx, <span class="string">"Account"</span>, accountID)
+<span class="keyword">if</span> err != <span class="keyword">nil</span> {
+    <span class="keyword">if</span> types.<span class="function">IsNotFoundError</span>(err) {
+        <span class="comment">// Handle 404 - record doesn't exist</span>
+        log.<span class="function">Info</span>(<span class="string">"Account not found"</span>)
+        <span class="keyword">return</span> <span class="keyword">nil</span>
+    }
+    <span class="keyword">if</span> types.<span class="function">IsAuthError</span>(err) {
+        <span class="comment">// Handle auth error - refresh token</span>
+        client.<span class="function">RefreshToken</span>(ctx)
+        <span class="keyword">return</span> <span class="function">retry</span>()
+    }
+    <span class="keyword">if</span> types.<span class="function">IsRateLimitError</span>(err) {
+        <span class="comment">// Handle rate limit - back off</span>
+        time.<span class="function">Sleep</span>(<span class="number">60</span> * time.Second)
+        <span class="keyword">return</span> <span class="function">retry</span>()
+    }
+    <span class="comment">// Unknown error</span>
+    <span class="keyword">return</span> err
+}</code></pre>
+        </div>
+
+        <h2>Error Details</h2>
+        <div class="code-block">
+            <div class="code-header"><span>Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>_, err := client.<span class="function">SObjects</span>().<span class="function">Create</span>(ctx, <span class="string">"Account"</span>, data)
+<span class="keyword">if</span> err != <span class="keyword">nil</span> {
+    <span class="keyword">var</span> apiErr *types.APIError
+    <span class="keyword">if</span> errors.<span class="function">As</span>(err, &apiErr) {
+        fmt.<span class="function">Printf</span>(<span class="string">"Status: %d\n"</span>, apiErr.StatusCode)
+        fmt.<span class="function">Printf</span>(<span class="string">"Error Code: %s\n"</span>, apiErr.ErrorCode)
+        fmt.<span class="function">Printf</span>(<span class="string">"Message: %s\n"</span>, apiErr.Message)
+        
+        <span class="keyword">for</span> _, field := <span class="keyword">range</span> apiErr.Fields {
+            fmt.<span class="function">Printf</span>(<span class="string">"Field: %s\n"</span>, field)
+        }
+    }
+}</code></pre>
+        </div>
+
+        <h2>Retryable Errors</h2>
+        <div class="code-block">
+            <div class="code-header"><span>Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code><span class="comment">// Check if error is retryable</span>
+<span class="keyword">if</span> types.<span class="function">IsRetryableError</span>(err) {
+    <span class="comment">// 503, 429, network errors - can retry</span>
+    <span class="keyword">return</span> <span class="function">retryWithBackoff</span>(operation)
+}
+
+<span class="comment">// 400, 404, 403 - don't retry</span>
+<span class="keyword">return</span> err</code></pre>
+        </div>
+
+        <h2>Validation Errors</h2>
+        <div class="code-block">
+            <div class="code-header"><span>Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code><span class="keyword">var</span> valErr *types.ValidationError
+<span class="keyword">if</span> errors.<span class="function">As</span>(err, &valErr) {
+    <span class="keyword">for</span> _, issue := <span class="keyword">range</span> valErr.Fields {
+        fmt.<span class="function">Printf</span>(<span class="string">"Invalid field: %s - %s\n"</span>, issue.Field, issue.Message)
+    }
+}</code></pre>
+        </div>
+
+        <h2>Built-in Retry</h2>
+        <p>The SDK includes automatic retry with exponential backoff for transient errors:</p>
+        <div class="code-block">
+            <div class="code-header"><span>Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>client, _ := salesforce.<span class="function">NewClient</span>(
+    salesforce.<span class="function">WithOAuthRefresh</span>(clientID, secret, token),
+    salesforce.<span class="function">WithMaxRetries</span>(<span class="number">5</span>),  <span class="comment">// Default: 3</span>
+)</code></pre>
+        </div>
+    </main>
+    <footer class="footer">
+        <p>Salesforce Go SDK v2.0.0 • <a href="https://github.com/PramithaMJ/salesforce">GitHub</a></p>
+    </footer>
+    <script src="../js/main.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulk API 2.0 - Salesforce Go SDK</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">⚡</div>
+            <a href="../index.html" style="color: inherit;">Salesforce Go SDK</a>
+        </div>
+        <nav class="header-nav">
+            <a href="https://github.com/PramithaMJ/salesforce" target="_blank">GitHub</a>
+        </nav>
+    </header>
+
+    <aside class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-title">Getting Started</div>
+            <ul class="sidebar-links">
+                <li><a href="../index.html">Overview</a></li>
+                <li><a href="getting-started.html">Installation</a></li>
+                <li><a href="authentication.html">Authentication</a></li>
+            </ul>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-title">API Reference</div>
+            <ul class="sidebar-links">
+                <li><a href="sobjects.html">SObjects API</a></li>
+                <li><a href="query.html">Query (SOQL)</a></li>
+                <li><a href="search.html">Search (SOSL)</a></li>
+                <li><a href="bulk.html" class="active">Bulk API 2.0</a></li>
+                <li><a href="composite.html">Composite API</a></li>
+                <li><a href="analytics.html">Analytics</a></li>
+                <li><a href="tooling.html">Tooling API</a></li>
+                <li><a href="chatter.html">Chatter API</a></li>
+                <li><a href="uiapi.html">UI API</a></li>
+                <li><a href="limits.html">Limits</a></li>
+                <li><a href="apex.html">Apex REST</a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <main class="main">
+        <h1>Bulk API 2.0</h1>
+        <p>Process large data volumes with ingest and query jobs.</p>
+
+        <h2>Bulk Insert</h2>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code><span class="comment">// Create an ingest job</span>
+job, err := client.<span class="function">Bulk</span>().<span class="function">CreateJob</span>(ctx, bulk.CreateJobRequest{
+    Object:      <span class="string">"Account"</span>,
+    Operation:   bulk.OperationInsert,
+    ContentType: bulk.ContentTypeCSV,
+})
+
+<span class="comment">// Upload CSV data</span>
+records := []<span class="keyword">map</span>[<span class="type">string</span>]<span class="type">string</span>{
+    {<span class="string">"Name"</span>: <span class="string">"Acme Corp"</span>, <span class="string">"Industry"</span>: <span class="string">"Technology"</span>},
+    {<span class="string">"Name"</span>: <span class="string">"Global Inc"</span>, <span class="string">"Industry"</span>: <span class="string">"Finance"</span>},
+}
+err = client.<span class="function">Bulk</span>().<span class="function">UploadCSV</span>(ctx, job.ID, records, []<span class="type">string</span>{<span class="string">"Name"</span>, <span class="string">"Industry"</span>})
+
+<span class="comment">// Close job and wait for completion</span>
+client.<span class="function">Bulk</span>().<span class="function">CloseJob</span>(ctx, job.ID)
+job, err = client.<span class="function">Bulk</span>().<span class="function">WaitForCompletion</span>(ctx, job.ID, <span class="number">5</span>*time.Second)
+
+fmt.<span class="function">Printf</span>(<span class="string">"Processed: %d, Failed: %d\n"</span>, 
+    job.NumberRecordsProcessed, job.NumberRecordsFailed)</code></pre>
+        </div>
+
+        <h2>Operations</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Operation</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>OperationInsert</code></td>
+                    <td>Insert new records</td>
+                </tr>
+                <tr>
+                    <td><code>OperationUpdate</code></td>
+                    <td>Update existing records</td>
+                </tr>
+                <tr>
+                    <td><code>OperationUpsert</code></td>
+                    <td>Insert or update by external ID</td>
+                </tr>
+                <tr>
+                    <td><code>OperationDelete</code></td>
+                    <td>Delete records (softDelete)</td>
+                </tr>
+                <tr>
+                    <td><code>OperationHardDelete</code></td>
+                    <td>Permanently delete records</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Bulk Update</h2>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>job, _ := client.<span class="function">Bulk</span>().<span class="function">CreateJob</span>(ctx, bulk.CreateJobRequest{
+    Object:    <span class="string">"Account"</span>,
+    Operation: bulk.OperationUpdate,
+})
+
+<span class="comment">// Records must include the Id field for updates</span>
+records := []<span class="keyword">map</span>[<span class="type">string</span>]<span class="type">string</span>{
+    {<span class="string">"Id"</span>: <span class="string">"001xx000003DGbY"</span>, <span class="string">"Industry"</span>: <span class="string">"Healthcare"</span>},
+}
+client.<span class="function">Bulk</span>().<span class="function">UploadCSV</span>(ctx, job.ID, records, []<span class="type">string</span>{<span class="string">"Id"</span>, <span class="string">"Industry"</span>})</code></pre>
+        </div>
+
+        <h2>Bulk Upsert</h2>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>job, _ := client.<span class="function">Bulk</span>().<span class="function">CreateJob</span>(ctx, bulk.CreateJobRequest{
+    Object:         <span class="string">"Account"</span>,
+    Operation:      bulk.OperationUpsert,
+    ExternalIdField: <span class="string">"External_ID__c"</span>,  <span class="comment">// Required for upsert</span>
+})</code></pre>
+        </div>
+
+        <h2>Bulk Query</h2>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code><span class="comment">// Create a query job</span>
+queryJob, err := client.<span class="function">Bulk</span>().<span class="function">CreateQueryJob</span>(ctx, bulk.CreateQueryJobRequest{
+    Query: <span class="string">"SELECT Id, Name FROM Account WHERE Industry = 'Technology'"</span>,
+})
+
+<span class="comment">// Wait for query completion</span>
+queryJob, _ = client.<span class="function">Bulk</span>().<span class="function">WaitForQueryCompletion</span>(ctx, queryJob.ID, <span class="number">5</span>*time.Second)
+
+<span class="comment">// Get results as CSV</span>
+csv, _ := client.<span class="function">Bulk</span>().<span class="function">GetQueryResults</span>(ctx, queryJob.ID)</code></pre>
+        </div>
+
+        <h2>Get Job Results</h2>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code><span class="comment">// Get successful results</span>
+successRecords, _ := client.<span class="function">Bulk</span>().<span class="function">GetSuccessfulResults</span>(ctx, job.ID)
+
+<span class="comment">// Get failed results</span>
+failedRecords, _ := client.<span class="function">Bulk</span>().<span class="function">GetFailedResults</span>(ctx, job.ID)
+<span class="keyword">for</span> _, record := <span class="keyword">range</span> failedRecords {
+    fmt.<span class="function">Printf</span>(<span class="string">"Error: %s\n"</span>, record.Error)
+}
+
+<span class="comment">// Get unprocessed records</span>
+unprocessed, _ := client.<span class="function">Bulk</span>().<span class="function">GetUnprocessedRecords</span>(ctx, job.ID)</code></pre>
+        </div>
+
+        <h2>Available Methods</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Method</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>CreateJob()</code></td>
+                    <td>Create ingest job</td>
+                </tr>
+                <tr>
+                    <td><code>GetJob()</code></td>
+                    <td>Get job status</td>
+                </tr>
+                <tr>
+                    <td><code>CloseJob()</code></td>
+                    <td>Close job for processing</td>
+                </tr>
+                <tr>
+                    <td><code>AbortJob()</code></td>
+                    <td>Abort a job</td>
+                </tr>
+                <tr>
+                    <td><code>DeleteJob()</code></td>
+                    <td>Delete a job</td>
+                </tr>
+                <tr>
+                    <td><code>UploadCSV()</code></td>
+                    <td>Upload data to job</td>
+                </tr>
+                <tr>
+                    <td><code>WaitForCompletion()</code></td>
+                    <td>Wait for job to finish</td>
+                </tr>
+                <tr>
+                    <td><code>GetSuccessfulResults()</code></td>
+                    <td>Get success records</td>
+                </tr>
+                <tr>
+                    <td><code>GetFailedResults()</code></td>
+                    <td>Get failed records</td>
+                </tr>
+                <tr>
+                    <td><code>CreateQueryJob()</code></td>
+                    <td>Create query job</td>
+                </tr>
+                <tr>
+                    <td><code>GetQueryResults()</code></td>
+                    <td>Get query results</td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+
+    <footer class="footer">
+        <p>Salesforce Go SDK v2.0.0 • <a href="https://github.com/PramithaMJ/salesforce">GitHub</a> • MIT License</p>
+    </footer>
+
+    <script src="../js/main.js"></script>
+</body>
+
+</html>

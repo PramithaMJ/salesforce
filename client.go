@@ -7,20 +7,20 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/PramithaMJ/salesforce/analytics"
-	"github.com/PramithaMJ/salesforce/apex"
-	"github.com/PramithaMJ/salesforce/auth"
-	"github.com/PramithaMJ/salesforce/bulk"
-	"github.com/PramithaMJ/salesforce/composite"
-	"github.com/PramithaMJ/salesforce/connect"
-	sfhttp "github.com/PramithaMJ/salesforce/http"
-	"github.com/PramithaMJ/salesforce/limits"
-	"github.com/PramithaMJ/salesforce/query"
-	"github.com/PramithaMJ/salesforce/search"
-	"github.com/PramithaMJ/salesforce/sobjects"
-	"github.com/PramithaMJ/salesforce/tooling"
-	"github.com/PramithaMJ/salesforce/types"
-	"github.com/PramithaMJ/salesforce/uiapi"
+	"github.com/PramithaMJ/salesforce/v2/analytics"
+	"github.com/PramithaMJ/salesforce/v2/apex"
+	"github.com/PramithaMJ/salesforce/v2/auth"
+	"github.com/PramithaMJ/salesforce/v2/bulk"
+	"github.com/PramithaMJ/salesforce/v2/composite"
+	"github.com/PramithaMJ/salesforce/v2/connect"
+	sfhttp "github.com/PramithaMJ/salesforce/v2/http"
+	"github.com/PramithaMJ/salesforce/v2/limits"
+	"github.com/PramithaMJ/salesforce/v2/query"
+	"github.com/PramithaMJ/salesforce/v2/search"
+	"github.com/PramithaMJ/salesforce/v2/sobjects"
+	"github.com/PramithaMJ/salesforce/v2/tooling"
+	"github.com/PramithaMJ/salesforce/v2/types"
+	"github.com/PramithaMJ/salesforce/v2/uiapi"
 )
 
 // Client is the main Salesforce API client.
@@ -30,17 +30,17 @@ type Client struct {
 	auth       auth.Authenticator
 
 	// Services
-	sobjects   *sobjects.Service
-	query      *query.Service
-	bulk       *bulk.Service
-	composite  *composite.Service
-	analytics  *analytics.Service
-	tooling    *tooling.Service
-	connect    *connect.Service
-	limits     *limits.Service
-	uiapi      *uiapi.Service
-	search     *search.Service
-	apex       *apex.Service
+	sobjects  *sobjects.Service
+	query     *query.Service
+	bulk      *bulk.Service
+	composite *composite.Service
+	analytics *analytics.Service
+	tooling   *tooling.Service
+	connect   *connect.Service
+	limits    *limits.Service
+	uiapi     *uiapi.Service
+	search    *search.Service
+	apex      *apex.Service
 }
 
 // NewClient creates a new Salesforce client with the given options.

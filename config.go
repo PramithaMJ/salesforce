@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/PramithaMJ/salesforce/types"
+	"github.com/PramithaMJ/salesforce/v2/types"
 )
 
 // Config holds the configuration for the Salesforce client.

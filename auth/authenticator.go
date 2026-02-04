@@ -12,7 +12,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/PramithaMJ/salesforce/types"
+	"github.com/PramithaMJ/salesforce/v2/types"
 )
 
 // Authenticator defines the authentication interface.

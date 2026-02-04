@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/PramithaMJ/salesforce/types"
+	"github.com/PramithaMJ/salesforce/v2/types"
 )
 
 // Client provides HTTP operations for Salesforce API.

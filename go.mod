@@ -1,5 +1,3 @@
-module github.com/PramithaMJ/salesforce
+module github.com/PramithaMJ/salesforce/v2
 
 go 1.21
-
-// Version: v2.0.2

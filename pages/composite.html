@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Composite API - Salesforce Go SDK</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">⚡</div>
+            <a href="../index.html" style="color: inherit;">Salesforce Go SDK</a>
+        </div>
+        <nav class="header-nav">
+            <a href="https://github.com/PramithaMJ/salesforce" target="_blank">GitHub</a>
+        </nav>
+    </header>
+
+    <aside class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-title">Getting Started</div>
+            <ul class="sidebar-links">
+                <li><a href="../index.html">Overview</a></li>
+                <li><a href="getting-started.html">Installation</a></li>
+                <li><a href="authentication.html">Authentication</a></li>
+            </ul>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-title">API Reference</div>
+            <ul class="sidebar-links">
+                <li><a href="sobjects.html">SObjects API</a></li>
+                <li><a href="query.html">Query (SOQL)</a></li>
+                <li><a href="search.html">Search (SOSL)</a></li>
+                <li><a href="bulk.html">Bulk API 2.0</a></li>
+                <li><a href="composite.html" class="active">Composite API</a></li>
+                <li><a href="analytics.html">Analytics</a></li>
+                <li><a href="tooling.html">Tooling API</a></li>
+                <li><a href="chatter.html">Chatter API</a></li>
+                <li><a href="uiapi.html">UI API</a></li>
+                <li><a href="limits.html">Limits</a></li>
+                <li><a href="apex.html">Apex REST</a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <main class="main">
+        <h1>Composite API</h1>
+        <p>Execute multiple operations in a single API call using Composite requests.</p>
+
+        <h2>Composite Request</h2>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>resp, err := client.<span class="function">Composite</span>().<span class="function">Execute</span>(ctx, composite.Request{
+    AllOrNone: <span class="keyword">true</span>,  <span class="comment">// Rollback all if any fails</span>
+    CompositeRequest: []composite.Subrequest{
+        {
+            Method:      <span class="string">"POST"</span>,
+            URL:         <span class="string">"/services/data/v59.0/sobjects/Account"</span>,
+            ReferenceId: <span class="string">"newAccount"</span>,
+            Body:        <span class="keyword">map</span>[<span class="type">string</span>]<span class="keyword">interface</span>{}{<span class="string">"Name"</span>: <span class="string">"New Account"</span>},
+        },
+        {
+            Method:      <span class="string">"POST"</span>,
+            URL:         <span class="string">"/services/data/v59.0/sobjects/Contact"</span>,
+            ReferenceId: <span class="string">"newContact"</span>,
+            Body: <span class="keyword">map</span>[<span class="type">string</span>]<span class="keyword">interface</span>{}{
+                <span class="string">"LastName"</span>:  <span class="string">"Smith"</span>,
+                <span class="string">"AccountId"</span>: <span class="string">"@{newAccount.id}"</span>,  <span class="comment">// Reference previous result</span>
+            },
+        },
+    },
+})
+
+<span class="keyword">for</span> _, result := <span class="keyword">range</span> resp.CompositeResponse {
+    fmt.<span class="function">Printf</span>(<span class="string">"%s: %d\n"</span>, result.ReferenceId, result.HTTPStatusCode)
+}</code></pre>
+        </div>
+
+        <h2>SObject Tree (Create Related Records)</h2>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>resp, err := client.<span class="function">Composite</span>().<span class="function">CreateTree</span>(ctx, <span class="string">"Account"</span>, composite.TreeRequest{
+    Records: []composite.TreeRecord{
+        {
+            Attributes:  composite.RecordAttributes{Type: <span class="string">"Account"</span>, ReferenceId: <span class="string">"acc1"</span>},
+            Name:        <span class="string">"Parent Account"</span>,
+            Contacts: &composite.RelatedRecords{
+                Records: []<span class="keyword">interface</span>{}{
+                    <span class="keyword">map</span>[<span class="type">string</span>]<span class="keyword">interface</span>{}{
+                        <span class="string">"attributes"</span>: <span class="keyword">map</span>[<span class="type">string</span>]<span class="type">string</span>{<span class="string">"type"</span>: <span class="string">"Contact"</span>, <span class="string">"referenceId"</span>: <span class="string">"cont1"</span>},
+                        <span class="string">"LastName"</span>:   <span class="string">"Smith"</span>,
+                    },
+                },
+            },
+        },
+    },
+})</code></pre>
+        </div>
+
+        <h2>Composite Graph</h2>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>resp, err := client.<span class="function">Composite</span>().<span class="function">ExecuteGraph</span>(ctx, composite.GraphRequest{
+    Graphs: []composite.Graph{
+        {
+            GraphId: <span class="string">"graph1"</span>,
+            CompositeRequest: []composite.Subrequest{
+                {Method: <span class="string">"POST"</span>, URL: <span class="string">"/sobjects/Account"</span>, ReferenceId: <span class="string">"newAcc"</span>,
+                 Body: <span class="keyword">map</span>[<span class="type">string</span>]<span class="keyword">interface</span>{}{<span class="string">"Name"</span>: <span class="string">"Graph Account"</span>}},
+            },
+        },
+    },
+})</code></pre>
+        </div>
+
+        <h2>SObject Collections</h2>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code><span class="comment">// Create multiple records at once</span>
+results, err := client.<span class="function">Composite</span>().<span class="function">CreateCollection</span>(ctx, composite.CollectionRequest{
+    AllOrNone: <span class="keyword">false</span>,
+    Records: []<span class="keyword">map</span>[<span class="type">string</span>]<span class="keyword">interface</span>{}{
+        {<span class="string">"attributes"</span>: <span class="keyword">map</span>[<span class="type">string</span>]<span class="type">string</span>{<span class="string">"type"</span>: <span class="string">"Account"</span>}, <span class="string">"Name"</span>: <span class="string">"Account 1"</span>},
+        {<span class="string">"attributes"</span>: <span class="keyword">map</span>[<span class="type">string</span>]<span class="type">string</span>{<span class="string">"type"</span>: <span class="string">"Account"</span>}, <span class="string">"Name"</span>: <span class="string">"Account 2"</span>},
+    },
+})
+
+<span class="comment">// Update multiple records</span>
+results, _ := client.<span class="function">Composite</span>().<span class="function">UpdateCollection</span>(ctx, req)
+
+<span class="comment">// Delete multiple records</span>
+results, _ := client.<span class="function">Composite</span>().<span class="function">DeleteCollection</span>(ctx, []<span class="type">string</span>{id1, id2, id3})</code></pre>
+        </div>
+
+        <h2>Batch Request</h2>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>resp, err := client.<span class="function">Composite</span>().<span class="function">ExecuteBatch</span>(ctx, composite.BatchRequest{
+    HaltOnError: <span class="keyword">false</span>,
+    BatchRequests: []composite.BatchSubrequest{
+        {Method: <span class="string">"GET"</span>, URL: <span class="string">"v59.0/sobjects/Account/001xx000"</span>},
+        {Method: <span class="string">"GET"</span>, URL: <span class="string">"v59.0/sobjects/Contact/003xx000"</span>},
+    },
+})</code></pre>
+        </div>
+
+        <h2>Available Methods</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Method</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>Execute()</code></td>
+                    <td>Execute composite request</td>
+                </tr>
+                <tr>
+                    <td><code>ExecuteBatch()</code></td>
+                    <td>Execute batch request</td>
+                </tr>
+                <tr>
+                    <td><code>CreateTree()</code></td>
+                    <td>Create records with relationships</td>
+                </tr>
+                <tr>
+                    <td><code>ExecuteGraph()</code></td>
+                    <td>Execute composite graph</td>
+                </tr>
+                <tr>
+                    <td><code>CreateCollection()</code></td>
+                    <td>Create multiple records</td>
+                </tr>
+                <tr>
+                    <td><code>UpdateCollection()</code></td>
+                    <td>Update multiple records</td>
+                </tr>
+                <tr>
+                    <td><code>DeleteCollection()</code></td>
+                    <td>Delete multiple records</td>
+                </tr>
+                <tr>
+                    <td><code>GetCollection()</code></td>
+                    <td>Get multiple records by ID</td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+
+    <footer class="footer">
+        <p>Salesforce Go SDK v2.0.0 • <a href="https://github.com/PramithaMJ/salesforce">GitHub</a> • MIT License</p>
+    </footer>
+
+    <script src="../js/main.js"></script>
+</body>
+
+</html>

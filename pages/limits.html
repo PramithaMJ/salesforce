@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limits API - Salesforce Go SDK</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">⚡</div><a href="../index.html" style="color: inherit;">Salesforce Go SDK</a>
+        </div>
+        <nav class="header-nav"><a href="https://github.com/PramithaMJ/salesforce" target="_blank">GitHub</a></nav>
+    </header>
+    <aside class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-title">Getting Started</div>
+            <ul class="sidebar-links">
+                <li><a href="../index.html">Overview</a></li>
+                <li><a href="getting-started.html">Installation</a></li>
+                <li><a href="authentication.html">Authentication</a></li>
+            </ul>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-title">API Reference</div>
+            <ul class="sidebar-links">
+                <li><a href="sobjects.html">SObjects API</a></li>
+                <li><a href="query.html">Query (SOQL)</a></li>
+                <li><a href="search.html">Search (SOSL)</a></li>
+                <li><a href="bulk.html">Bulk API 2.0</a></li>
+                <li><a href="composite.html">Composite API</a></li>
+                <li><a href="analytics.html">Analytics</a></li>
+                <li><a href="tooling.html">Tooling API</a></li>
+                <li><a href="chatter.html">Chatter API</a></li>
+                <li><a href="uiapi.html">UI API</a></li>
+                <li><a href="limits.html" class="active">Limits</a></li>
+                <li><a href="apex.html">Apex REST</a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <main class="main">
+        <h1>Limits API</h1>
+        <p>Monitor Salesforce API limits and org usage.</p>
+
+        <h2>Get All Limits</h2>
+        <div class="code-block">
+            <div class="code-header"><span>Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>limits, err := client.<span class="function">Limits</span>().<span class="function">GetLimits</span>(ctx)
+
+<span class="comment">// Daily API requests</span>
+fmt.<span class="function">Printf</span>(<span class="string">"API Requests: %d / %d (%.1f%% used)\n"</span>,
+    limits.DailyApiRequests.Remaining,
+    limits.DailyApiRequests.Max,
+    <span class="number">100.0</span> - <span class="type">float64</span>(limits.DailyApiRequests.Remaining)/<span class="type">float64</span>(limits.DailyApiRequests.Max)*<span class="number">100</span>)
+
+<span class="comment">// Data storage</span>
+fmt.<span class="function">Printf</span>(<span class="string">"Data Storage: %d MB / %d MB\n"</span>,
+    limits.DataStorageMB.Remaining,
+    limits.DataStorageMB.Max)</code></pre>
+        </div>
+
+        <h2>Monitor Specific Limits</h2>
+        <div class="code-block">
+            <div class="code-header"><span>Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code><span class="comment">// Check if nearing limits</span>
+limits, _ := client.<span class="function">Limits</span>().<span class="function">GetLimits</span>(ctx)
+
+<span class="keyword">if</span> limits.DailyApiRequests.PercentUsed() > <span class="number">80</span> {
+    log.<span class="function">Warn</span>(<span class="string">"API requests nearing limit!"</span>)
+}
+
+<span class="keyword">if</span> limits.DailyBulkApiRequests.Remaining < <span class="number">100</span> {
+    log.<span class="function">Warn</span>(<span class="string">"Bulk API requests running low"</span>)
+}</code></pre>
+        </div>
+
+        <h2>Available Limits</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Limit</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>DailyApiRequests</code></td>
+                    <td>Daily REST API calls</td>
+                </tr>
+                <tr>
+                    <td><code>DailyBulkApiRequests</code></td>
+                    <td>Daily Bulk API batches</td>
+                </tr>
+                <tr>
+                    <td><code>DailyAsyncApexExecutions</code></td>
+                    <td>Async Apex executions</td>
+                </tr>
+                <tr>
+                    <td><code>DailyStreamingApiEvents</code></td>
+                    <td>Streaming API events</td>
+                </tr>
+                <tr>
+                    <td><code>DataStorageMB</code></td>
+                    <td>Data storage (MB)</td>
+                </tr>
+                <tr>
+                    <td><code>FileStorageMB</code></td>
+                    <td>File storage (MB)</td>
+                </tr>
+                <tr>
+                    <td><code>PermissionSets</code></td>
+                    <td>Custom permission sets</td>
+                </tr>
+                <tr>
+                    <td><code>SingleEmail</code></td>
+                    <td>Single email invocations</td>
+                </tr>
+                <tr>
+                    <td><code>MassEmail</code></td>
+                    <td>Mass email invocations</td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+    <footer class="footer">
+        <p>Salesforce Go SDK v2.0.0 • <a href="https://github.com/PramithaMJ/salesforce">GitHub</a></p>
+    </footer>
+    <script src="../js/main.js"></script>
+</body>
+
+</html>

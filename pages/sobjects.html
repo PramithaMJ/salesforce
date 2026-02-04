@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SObjects API - Salesforce Go SDK</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">⚡</div>
+            <a href="../index.html" style="color: inherit;">Salesforce Go SDK</a>
+        </div>
+        <nav class="header-nav">
+            <a href="https://github.com/PramithaMJ/salesforce" target="_blank">GitHub</a>
+        </nav>
+    </header>
+
+    <aside class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-title">Getting Started</div>
+            <ul class="sidebar-links">
+                <li><a href="../index.html">Overview</a></li>
+                <li><a href="getting-started.html">Installation</a></li>
+                <li><a href="authentication.html">Authentication</a></li>
+            </ul>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-title">API Reference</div>
+            <ul class="sidebar-links">
+                <li><a href="sobjects.html" class="active">SObjects API</a></li>
+                <li><a href="query.html">Query (SOQL)</a></li>
+                <li><a href="search.html">Search (SOSL)</a></li>
+                <li><a href="bulk.html">Bulk API 2.0</a></li>
+                <li><a href="composite.html">Composite API</a></li>
+                <li><a href="analytics.html">Analytics</a></li>
+                <li><a href="tooling.html">Tooling API</a></li>
+                <li><a href="chatter.html">Chatter API</a></li>
+                <li><a href="uiapi.html">UI API</a></li>
+                <li><a href="limits.html">Limits</a></li>
+                <li><a href="apex.html">Apex REST</a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <main class="main">
+        <h1>SObjects API</h1>
+        <p>Create, read, update, and delete Salesforce records with the SObjects service.</p>
+
+        <h2>Create a Record</h2>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>result, err := client.<span class="function">SObjects</span>().<span class="function">Create</span>(ctx, <span class="string">"Account"</span>, <span class="keyword">map</span>[<span class="type">string</span>]<span class="keyword">interface</span>{}{
+    <span class="string">"Name"</span>:     <span class="string">"Acme Corporation"</span>,
+    <span class="string">"Industry"</span>: <span class="string">"Technology"</span>,
+    <span class="string">"Website"</span>:  <span class="string">"https://acme.com"</span>,
+})
+<span class="keyword">if</span> err != <span class="keyword">nil</span> {
+    log.<span class="function">Fatal</span>(err)
+}
+fmt.<span class="function">Println</span>(<span class="string">"Created ID:"</span>, result.ID)</code></pre>
+        </div>
+
+        <h2>Get a Record</h2>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code><span class="comment">// Get all fields</span>
+record, err := client.<span class="function">SObjects</span>().<span class="function">Get</span>(ctx, <span class="string">"Account"</span>, <span class="string">"001xx000003DGbYAAW"</span>)
+
+<span class="comment">// Get specific fields only</span>
+record, err := client.<span class="function">SObjects</span>().<span class="function">Get</span>(ctx, <span class="string">"Account"</span>, accountID, 
+    <span class="string">"Id"</span>, <span class="string">"Name"</span>, <span class="string">"Industry"</span>)
+
+<span class="comment">// Access field values</span>
+name := record.<span class="function">StringField</span>(<span class="string">"Name"</span>)
+revenue := record.<span class="function">FloatField</span>(<span class="string">"AnnualRevenue"</span>)
+isActive := record.<span class="function">BoolField</span>(<span class="string">"Active__c"</span>)</code></pre>
+        </div>
+
+        <h2>Update a Record</h2>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>err := client.<span class="function">SObjects</span>().<span class="function">Update</span>(ctx, <span class="string">"Account"</span>, accountID, <span class="keyword">map</span>[<span class="type">string</span>]<span class="keyword">interface</span>{}{
+    <span class="string">"Description"</span>: <span class="string">"Updated description"</span>,
+    <span class="string">"Rating"</span>:      <span class="string">"Hot"</span>,
+})</code></pre>
+        </div>
+
+        <h2>Upsert by External ID</h2>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>result, err := client.<span class="function">SObjects</span>().<span class="function">Upsert</span>(ctx, 
+    <span class="string">"Account"</span>,           <span class="comment">// Object type</span>
+    <span class="string">"External_ID__c"</span>,    <span class="comment">// External ID field</span>
+    <span class="string">"EXT-12345"</span>,         <span class="comment">// External ID value</span>
+    <span class="keyword">map</span>[<span class="type">string</span>]<span class="keyword">interface</span>{}{
+        <span class="string">"Name"</span>: <span class="string">"Updated Account"</span>,
+    },
+)</code></pre>
+        </div>
+
+        <h2>Delete a Record</h2>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>err := client.<span class="function">SObjects</span>().<span class="function">Delete</span>(ctx, <span class="string">"Account"</span>, accountID)</code></pre>
+        </div>
+
+        <h2>Describe Object</h2>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code><span class="comment">// Get metadata for an object</span>
+meta, err := client.<span class="function">SObjects</span>().<span class="function">Describe</span>(ctx, <span class="string">"Account"</span>)
+
+fmt.<span class="function">Println</span>(<span class="string">"Label:"</span>, meta.Label)
+fmt.<span class="function">Println</span>(<span class="string">"Createable:"</span>, meta.Createable)
+
+<span class="keyword">for</span> _, field := <span class="keyword">range</span> meta.Fields {
+    fmt.<span class="function">Printf</span>(<span class="string">"Field: %s (%s)\n"</span>, field.Name, field.Type)
+}</code></pre>
+        </div>
+
+        <h2>List All Objects</h2>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>global, err := client.<span class="function">SObjects</span>().<span class="function">DescribeGlobal</span>(ctx)
+
+<span class="keyword">for</span> _, obj := <span class="keyword">range</span> global.SObjects {
+    <span class="keyword">if</span> obj.Queryable {
+        fmt.<span class="function">Println</span>(obj.Name, <span class="string">"-"</span>, obj.Label)
+    }
+}</code></pre>
+        </div>
+
+        <h2>Get Deleted Records</h2>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>start := time.<span class="function">Now</span>().<span class="function">Add</span>(-<span class="number">24</span> * time.Hour)
+end := time.<span class="function">Now</span>()
+
+deleted, err := client.<span class="function">SObjects</span>().<span class="function">GetDeleted</span>(ctx, <span class="string">"Account"</span>, start, end)
+
+<span class="keyword">for</span> _, record := <span class="keyword">range</span> deleted.DeletedRecords {
+    fmt.<span class="function">Printf</span>(<span class="string">"Deleted: %s at %s\n"</span>, record.ID, record.DeletedDate)
+}</code></pre>
+        </div>
+
+        <h2>Available Methods</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Method</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>Create()</code></td>
+                    <td>Create a new record</td>
+                </tr>
+                <tr>
+                    <td><code>Get()</code></td>
+                    <td>Retrieve a record by ID</td>
+                </tr>
+                <tr>
+                    <td><code>Update()</code></td>
+                    <td>Update an existing record</td>
+                </tr>
+                <tr>
+                    <td><code>Upsert()</code></td>
+                    <td>Insert or update by external ID</td>
+                </tr>
+                <tr>
+                    <td><code>Delete()</code></td>
+                    <td>Delete a record</td>
+                </tr>
+                <tr>
+                    <td><code>Describe()</code></td>
+                    <td>Get object metadata</td>
+                </tr>
+                <tr>
+                    <td><code>DescribeGlobal()</code></td>
+                    <td>List all objects</td>
+                </tr>
+                <tr>
+                    <td><code>GetDeleted()</code></td>
+                    <td>Get deleted records</td>
+                </tr>
+                <tr>
+                    <td><code>GetUpdated()</code></td>
+                    <td>Get updated record IDs</td>
+                </tr>
+                <tr>
+                    <td><code>GetByExternalID()</code></td>
+                    <td>Get by external ID</td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+
+    <footer class="footer">
+        <p>Salesforce Go SDK v2.0.0 • <a href="https://github.com/PramithaMJ/salesforce">GitHub</a> • MIT License</p>
+    </footer>
+
+    <script src="../js/main.js"></script>
+</body>
+
+</html>

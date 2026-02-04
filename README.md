@@ -1,8 +1,11 @@
 # Salesforce Go SDK
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/PramithaMJ/salesforce.svg)](https://pkg.go.dev/github.com/PramithaMJ/salesforce)
+[![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://pramithamj.github.io/salesforce/)
 
-A comprehensive, production-grade Go SDK for Salesforce covering all major APIs with SOLID principles.
+A comprehensive, Go SDK for Salesforce covering all major APIs.
+
+**[View Full Documentation](https://pramithamj.github.io/salesforce/)**
 
 ## Installation
 

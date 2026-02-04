@@ -38,7 +38,10 @@ func (s *Service) GetJSON(ctx context.Context, path string, result interface{}) 
 	if err != nil {
 		return err
 	}
-	return json.Unmarshal(body, result)
+	if err := json.Unmarshal(body, result); err != nil {
+		return err
+	}
+	return nil
 }
 
 // Post calls POST on an Apex REST endpoint.
@@ -54,7 +57,9 @@ func (s *Service) PostJSON(ctx context.Context, path string, body, result interf
 		return err
 	}
 	if result != nil && len(respBody) > 0 {
-		return json.Unmarshal(respBody, result)
+		if err := json.Unmarshal(respBody, result); err != nil {
+			return err
+		}
 	}
 	return nil
 }

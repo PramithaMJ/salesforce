@@ -22,49 +22,49 @@ type ExecuteAnonymousResult struct {
 
 // TestResult contains unit test results.
 type TestResult struct {
-	ApexTestResults    []ApexTestResult   `json:"apexTestResults,omitempty"`
-	ApexTestClassId    string             `json:"apexTestClassId"`
-	AsyncApexJobId     string             `json:"asyncApexJobId"`
-	Status             string             `json:"status"`
-	NumberRun          int                `json:"numberRun"`
-	NumberFailed       int                `json:"numberFailed"`
-	TotalTime          float64            `json:"totalTime"`
+	ApexTestResults []ApexTestResult `json:"apexTestResults,omitempty"`
+	ApexTestClassId string           `json:"apexTestClassId"`
+	AsyncApexJobId  string           `json:"asyncApexJobId"`
+	Status          string           `json:"status"`
+	NumberRun       int              `json:"numberRun"`
+	NumberFailed    int              `json:"numberFailed"`
+	TotalTime       float64          `json:"totalTime"`
 }
 
 // ApexTestResult contains individual test results.
 type ApexTestResult struct {
-	ID             string  `json:"id"`
-	ApexClassId    string  `json:"apexClassId"`
-	ApexClassName  string  `json:"apexClassName"`
-	MethodName     string  `json:"methodName"`
-	Outcome        string  `json:"outcome"`
-	Message        string  `json:"message,omitempty"`
-	StackTrace     string  `json:"stackTrace,omitempty"`
-	RunTime        float64 `json:"runTime"`
+	ID            string  `json:"id"`
+	ApexClassId   string  `json:"apexClassId"`
+	ApexClassName string  `json:"apexClassName"`
+	MethodName    string  `json:"methodName"`
+	Outcome       string  `json:"outcome"`
+	Message       string  `json:"message,omitempty"`
+	StackTrace    string  `json:"stackTrace,omitempty"`
+	RunTime       float64 `json:"runTime"`
 }
 
 // TestQueueItem represents an item in the test queue.
 type TestQueueItem struct {
-	Id               string `json:"Id"`
-	ApexClassId      string `json:"ApexClassId"`
-	Status           string `json:"Status"`
-	ExtendedStatus   string `json:"ExtendedStatus,omitempty"`
-	ParentJobId      string `json:"ParentJobId,omitempty"`
-	TestRunResultId  string `json:"TestRunResultId,omitempty"`
+	Id              string `json:"Id"`
+	ApexClassId     string `json:"ApexClassId"`
+	Status          string `json:"Status"`
+	ExtendedStatus  string `json:"ExtendedStatus,omitempty"`
+	ParentJobId     string `json:"ParentJobId,omitempty"`
+	TestRunResultId string `json:"TestRunResultId,omitempty"`
 }
 
 // ApexLog represents an Apex debug log.
 type ApexLog struct {
-	Id              string `json:"Id"`
-	Application     string `json:"Application"`
-	DurationMillis  int    `json:"DurationMilliseconds"`
-	Location        string `json:"Location"`
-	LogLength       int    `json:"LogLength"`
-	LogUserId       string `json:"LogUserId"`
-	Operation       string `json:"Operation"`
-	Request         string `json:"Request"`
-	StartTime       string `json:"StartTime"`
-	Status          string `json:"Status"`
+	Id             string `json:"Id"`
+	Application    string `json:"Application"`
+	DurationMillis int    `json:"DurationMilliseconds"`
+	Location       string `json:"Location"`
+	LogLength      int    `json:"LogLength"`
+	LogUserId      string `json:"LogUserId"`
+	Operation      string `json:"Operation"`
+	Request        string `json:"Request"`
+	StartTime      string `json:"StartTime"`
+	Status         string `json:"Status"`
 }
 
 // Completions contains code completion results.
@@ -74,9 +74,9 @@ type Completions struct {
 
 // Completion represents a code completion suggestion.
 type Completion struct {
-	Name       string `json:"name"`
-	Type       string `json:"type"`
-	Signature  string `json:"signature,omitempty"`
+	Name      string `json:"name"`
+	Type      string `json:"type"`
+	Signature string `json:"signature,omitempty"`
 }
 
 // SObjectMetadata contains describe metadata for tooling objects.
@@ -109,25 +109,25 @@ type QueryResult struct {
 
 // ApexClass represents an Apex class.
 type ApexClass struct {
-	Id              string `json:"Id"`
-	Name            string `json:"Name"`
-	Body            string `json:"Body"`
-	ApiVersion      string `json:"ApiVersion"`
-	Status          string `json:"Status"`
-	IsValid         bool   `json:"IsValid"`
-	LengthWithoutComments int `json:"LengthWithoutComments"`
-	NamespacePrefix string `json:"NamespacePrefix,omitempty"`
+	Id                    string `json:"Id"`
+	Name                  string `json:"Name"`
+	Body                  string `json:"Body"`
+	ApiVersion            string `json:"ApiVersion"`
+	Status                string `json:"Status"`
+	IsValid               bool   `json:"IsValid"`
+	LengthWithoutComments int    `json:"LengthWithoutComments"`
+	NamespacePrefix       string `json:"NamespacePrefix,omitempty"`
 }
 
 // ApexTrigger represents an Apex trigger.
 type ApexTrigger struct {
-	Id              string `json:"Id"`
-	Name            string `json:"Name"`
-	Body            string `json:"Body"`
-	ApiVersion      string `json:"ApiVersion"`
-	Status          string `json:"Status"`
-	IsValid         bool   `json:"IsValid"`
-	TableEnumOrId   string `json:"TableEnumOrId"`
+	Id            string `json:"Id"`
+	Name          string `json:"Name"`
+	Body          string `json:"Body"`
+	ApiVersion    string `json:"ApiVersion"`
+	Status        string `json:"Status"`
+	IsValid       bool   `json:"IsValid"`
+	TableEnumOrId string `json:"TableEnumOrId"`
 }
 
 // HTTPClient interface for dependency injection.
@@ -321,8 +321,13 @@ func (s *Service) GetApexLogs(ctx context.Context, limit int) ([]ApexLog, error)
 	}
 	logs := make([]ApexLog, len(result.Records))
 	for i, r := range result.Records {
-		data, _ := json.Marshal(r)
-		json.Unmarshal(data, &logs[i])
+		data, err := json.Marshal(r)
+		if err != nil {
+			continue
+		}
+		if err := json.Unmarshal(data, &logs[i]); err != nil {
+			continue
+		}
 	}
 	return logs, nil
 }

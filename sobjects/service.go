@@ -204,57 +204,60 @@ func (s *SObject) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements json.Unmarshaler.
 func (s *SObject) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &s.data)
+	if err := json.Unmarshal(data, &s.data); err != nil {
+		return err
+	}
+	return nil
 }
 
 // Metadata contains SObject describe information.
 type Metadata struct {
-	Name                string           `json:"name"`
-	Label               string           `json:"label"`
-	LabelPlural         string           `json:"labelPlural"`
-	KeyPrefix           string           `json:"keyPrefix"`
-	Createable          bool             `json:"createable"`
-	Updateable          bool             `json:"updateable"`
-	Deletable           bool             `json:"deletable"`
-	Queryable           bool             `json:"queryable"`
-	Searchable          bool             `json:"searchable"`
-	Retrieveable        bool             `json:"retrieveable"`
-	Undeletable         bool             `json:"undeletable"`
-	Mergeable           bool             `json:"mergeable"`
-	Replicateable       bool             `json:"replicateable"`
-	Triggerable         bool             `json:"triggerable"`
-	FeedEnabled         bool             `json:"feedEnabled"`
-	HasSubtypes         bool             `json:"hasSubtypes"`
-	IsSubtype           bool             `json:"isSubtype"`
-	Custom              bool             `json:"custom"`
-	CustomSetting       bool             `json:"customSetting"`
-	Fields              []FieldMetadata  `json:"fields,omitempty"`
-	ChildRelationships  []ChildRelation  `json:"childRelationships,omitempty"`
-	RecordTypeInfos     []RecordTypeInfo `json:"recordTypeInfos,omitempty"`
+	Name               string           `json:"name"`
+	Label              string           `json:"label"`
+	LabelPlural        string           `json:"labelPlural"`
+	KeyPrefix          string           `json:"keyPrefix"`
+	Createable         bool             `json:"createable"`
+	Updateable         bool             `json:"updateable"`
+	Deletable          bool             `json:"deletable"`
+	Queryable          bool             `json:"queryable"`
+	Searchable         bool             `json:"searchable"`
+	Retrieveable       bool             `json:"retrieveable"`
+	Undeletable        bool             `json:"undeletable"`
+	Mergeable          bool             `json:"mergeable"`
+	Replicateable      bool             `json:"replicateable"`
+	Triggerable        bool             `json:"triggerable"`
+	FeedEnabled        bool             `json:"feedEnabled"`
+	HasSubtypes        bool             `json:"hasSubtypes"`
+	IsSubtype          bool             `json:"isSubtype"`
+	Custom             bool             `json:"custom"`
+	CustomSetting      bool             `json:"customSetting"`
+	Fields             []FieldMetadata  `json:"fields,omitempty"`
+	ChildRelationships []ChildRelation  `json:"childRelationships,omitempty"`
+	RecordTypeInfos    []RecordTypeInfo `json:"recordTypeInfos,omitempty"`
 }
 
 // FieldMetadata describes a field.
 type FieldMetadata struct {
-	Name                string   `json:"name"`
-	Label               string   `json:"label"`
-	Type                string   `json:"type"`
-	Length              int      `json:"length"`
-	Precision           int      `json:"precision"`
-	Scale               int      `json:"scale"`
-	Createable          bool     `json:"createable"`
-	Updateable          bool     `json:"updateable"`
-	Nillable            bool     `json:"nillable"`
-	Unique              bool     `json:"unique"`
-	Custom              bool     `json:"custom"`
-	ExternalId          bool     `json:"externalId"`
-	AutoNumber          bool     `json:"autoNumber"`
-	Calculated          bool     `json:"calculated"`
-	NameField           bool     `json:"nameField"`
-	IdLookup            bool     `json:"idLookup"`
-	DefaultValue        interface{} `json:"defaultValue"`
-	ReferenceTo         []string `json:"referenceTo,omitempty"`
-	RelationshipName    string   `json:"relationshipName,omitempty"`
-	PicklistValues      []PicklistValue `json:"picklistValues,omitempty"`
+	Name             string          `json:"name"`
+	Label            string          `json:"label"`
+	Type             string          `json:"type"`
+	Length           int             `json:"length"`
+	Precision        int             `json:"precision"`
+	Scale            int             `json:"scale"`
+	Createable       bool            `json:"createable"`
+	Updateable       bool            `json:"updateable"`
+	Nillable         bool            `json:"nillable"`
+	Unique           bool            `json:"unique"`
+	Custom           bool            `json:"custom"`
+	ExternalId       bool            `json:"externalId"`
+	AutoNumber       bool            `json:"autoNumber"`
+	Calculated       bool            `json:"calculated"`
+	NameField        bool            `json:"nameField"`
+	IdLookup         bool            `json:"idLookup"`
+	DefaultValue     interface{}     `json:"defaultValue"`
+	ReferenceTo      []string        `json:"referenceTo,omitempty"`
+	RelationshipName string          `json:"relationshipName,omitempty"`
+	PicklistValues   []PicklistValue `json:"picklistValues,omitempty"`
 }
 
 // PicklistValue represents a picklist option.
@@ -267,21 +270,21 @@ type PicklistValue struct {
 
 // ChildRelation describes a child relationship.
 type ChildRelation struct {
-	ChildSObject       string   `json:"childSObject"`
-	Field              string   `json:"field"`
-	RelationshipName   string   `json:"relationshipName"`
-	CascadeDelete      bool     `json:"cascadeDelete"`
-	RestrictedDelete   bool     `json:"restrictedDelete"`
-	DeprecatedAndHidden bool    `json:"deprecatedAndHidden"`
+	ChildSObject        string `json:"childSObject"`
+	Field               string `json:"field"`
+	RelationshipName    string `json:"relationshipName"`
+	CascadeDelete       bool   `json:"cascadeDelete"`
+	RestrictedDelete    bool   `json:"restrictedDelete"`
+	DeprecatedAndHidden bool   `json:"deprecatedAndHidden"`
 }
 
 // RecordTypeInfo describes a record type.
 type RecordTypeInfo struct {
-	Name        string `json:"name"`
-	RecordTypeId string `json:"recordTypeId"`
-	Available   bool   `json:"available"`
-	DefaultRecordTypeMapping bool `json:"defaultRecordTypeMapping"`
-	Master      bool   `json:"master"`
+	Name                     string `json:"name"`
+	RecordTypeId             string `json:"recordTypeId"`
+	Available                bool   `json:"available"`
+	DefaultRecordTypeMapping bool   `json:"defaultRecordTypeMapping"`
+	Master                   bool   `json:"master"`
 }
 
 // GlobalDescribe contains all accessible SObjects.
@@ -293,9 +296,9 @@ type GlobalDescribe struct {
 
 // DeletedRecords contains deleted record information.
 type DeletedRecords struct {
-	DeletedRecords []DeletedRecord `json:"deletedRecords"`
-	EarliestDateAvailable string `json:"earliestDateAvailable"`
-	LatestDateCovered     string `json:"latestDateCovered"`
+	DeletedRecords        []DeletedRecord `json:"deletedRecords"`
+	EarliestDateAvailable string          `json:"earliestDateAvailable"`
+	LatestDateCovered     string          `json:"latestDateCovered"`
 }
 
 // DeletedRecord represents a deleted record.
@@ -306,15 +309,15 @@ type DeletedRecord struct {
 
 // UpdatedRecords contains updated record IDs.
 type UpdatedRecords struct {
-	IDs                   []string `json:"ids"`
-	LatestDateCovered     string   `json:"latestDateCovered"`
+	IDs               []string `json:"ids"`
+	LatestDateCovered string   `json:"latestDateCovered"`
 }
 
 // CreateResult contains the result of a create operation.
 type CreateResult struct {
-	ID      string   `json:"id"`
-	Success bool     `json:"success"`
-	Errors  []Error  `json:"errors,omitempty"`
+	ID      string  `json:"id"`
+	Success bool    `json:"success"`
+	Errors  []Error `json:"errors,omitempty"`
 }
 
 // Error represents an operation error.

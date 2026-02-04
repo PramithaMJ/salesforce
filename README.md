@@ -1,8 +1,8 @@
 # Salesforce Go SDK
 
 [![Go](https://github.com/PramithaMJ/salesforce/actions/workflows/go.yml/badge.svg)](https://github.com/PramithaMJ/salesforce/actions/workflows/go.yml)
-[![Go Reference](https://pkg.go.dev/badge/github.com/PramithaMJ/salesforce.svg)](https://pkg.go.dev/github.com/PramithaMJ/salesforce)
-[![Go Report Card](https://goreportcard.com/badge/github.com/PramithaMJ/salesforce)](https://goreportcard.com/report/github.com/PramithaMJ/salesforce)
+[![Go Reference](https://pkg.go.dev/badge/github.com/PramithaMJ/salesforce/v2.svg)](https://pkg.go.dev/github.com/PramithaMJ/salesforce/v2)
+[![Go Report Card](https://goreportcard.com/badge/github.com/PramithaMJ/salesforce/v2)](https://goreportcard.com/report/github.com/PramithaMJ/salesforce/v2)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://pramithamj.github.io/salesforce/)
 
@@ -13,7 +13,13 @@ A comprehensive, production-ready Go SDK for Salesforce covering all major APIs.
 ## Installation
 
 ```bash
-go get github.com/PramithaMJ/salesforce
+go get github.com/PramithaMJ/salesforce/v2
+```
+
+## Import
+
+```go
+import "github.com/PramithaMJ/salesforce/v2"
 ```
 
 ## Features

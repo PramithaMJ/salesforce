@@ -5,160 +5,158 @@ import (
 	"net/http"
 	"time"
 
-	sfhttp "github.com/PramithaMJ/salesforce/http"
 	"github.com/PramithaMJ/salesforce/types"
 )
 
 // Config holds the configuration for the Salesforce client.
 type Config struct {
 	// Authentication
+	ClientID      string
+	ClientSecret  string
 	Username      string
 	Password      string
 	SecurityToken string
-	ClientID      string
-	ClientSecret  string
 	RefreshToken  string
+	AccessToken   string
 	TokenURL      string
+	InstanceURL   string
 
 	// Connection
-	BaseURL     string
-	InstanceURL string
-	APIVersion  string
-	Timeout     time.Duration
-
-	// Retry settings
-	MaxRetries   int
-	RetryWaitMin time.Duration
-	RetryWaitMax time.Duration
-
-	// Advanced
-	Logger     types.Logger
+	APIVersion string
+	Timeout    time.Duration
+	MaxRetries int
 	HTTPClient *http.Client
-	Debug      bool
+	Logger     types.Logger
 }
 
-// DefaultConfig returns a Config with default values.
-func DefaultConfig() *Config {
-	return &Config{
-		BaseURL:      "https://login.salesforce.com",
-		APIVersion:   types.DefaultAPIVersion,
-		Timeout:      types.DefaultTimeout,
-		MaxRetries:   types.DefaultMaxRetries,
-		RetryWaitMin: 1 * time.Second,
-		RetryWaitMax: 30 * time.Second,
-	}
-}
-
-// Validate checks if the configuration is valid.
+// Validate validates the configuration.
 func (c *Config) Validate() error {
-	hasRefresh := c.RefreshToken != "" && c.ClientID != ""
-	hasPassword := c.Username != "" && c.Password != ""
-	hasToken := c.InstanceURL != ""
+	hasRefreshToken := c.RefreshToken != ""
+	hasPasswordAuth := c.Username != "" && c.Password != ""
+	hasDirectToken := c.AccessToken != ""
 
-	if !hasRefresh && !hasPassword && !hasToken {
-		return errors.New("at least one authentication method must be configured")
+	if !hasRefreshToken && !hasPasswordAuth && !hasDirectToken {
+		return errors.New("authentication required: provide refresh token, username/password, or access token")
 	}
-
-	if c.APIVersion == "" {
-		return errors.New("API version is required")
+	if (hasRefreshToken || hasPasswordAuth) && c.ClientID == "" {
+		return errors.New("client_id required for OAuth flows")
 	}
-
+	if hasDirectToken && c.InstanceURL == "" {
+		return errors.New("instance_url required when using direct access token")
+	}
 	return nil
 }
 
-// Option is a functional option for configuring the client.
-type Option func(*Config)
+// Option configures the Salesforce client.
+type Option func(*Config) error
 
 // WithOAuthRefresh configures OAuth 2.0 refresh token authentication.
 func WithOAuthRefresh(clientID, clientSecret, refreshToken string) Option {
-	return func(c *Config) {
+	return func(c *Config) error {
 		c.ClientID = clientID
 		c.ClientSecret = clientSecret
 		c.RefreshToken = refreshToken
+		return nil
 	}
 }
 
-// WithPasswordAuth configures username/password authentication.
+// WithPasswordAuth configures username-password authentication.
 func WithPasswordAuth(username, password, securityToken string) Option {
-	return func(c *Config) {
+	return func(c *Config) error {
 		c.Username = username
 		c.Password = password
 		c.SecurityToken = securityToken
+		return nil
 	}
 }
 
-// WithCredentials sets the OAuth client credentials.
+// WithCredentials sets OAuth client credentials.
 func WithCredentials(clientID, clientSecret string) Option {
-	return func(c *Config) {
+	return func(c *Config) error {
 		c.ClientID = clientID
 		c.ClientSecret = clientSecret
+		return nil
+	}
+}
+
+// WithAccessToken sets a direct access token.
+func WithAccessToken(accessToken, instanceURL string) Option {
+	return func(c *Config) error {
+		c.AccessToken = accessToken
+		c.InstanceURL = instanceURL
+		return nil
 	}
 }
 
 // WithTokenURL sets the OAuth token endpoint URL.
-func WithTokenURL(tokenURL string) Option {
-	return func(c *Config) {
-		c.TokenURL = tokenURL
+func WithTokenURL(url string) Option {
+	return func(c *Config) error {
+		c.TokenURL = url
+		return nil
 	}
 }
 
 // WithInstanceURL sets the Salesforce instance URL.
-func WithInstanceURL(instanceURL string) Option {
-	return func(c *Config) {
-		c.InstanceURL = instanceURL
+func WithInstanceURL(url string) Option {
+	return func(c *Config) error {
+		c.InstanceURL = url
+		return nil
 	}
 }
 
-// WithBaseURL sets the base URL for authentication.
-func WithBaseURL(baseURL string) Option {
-	return func(c *Config) {
-		c.BaseURL = baseURL
-	}
-}
-
-// WithAPIVersion sets the Salesforce API version.
+// WithAPIVersion sets the API version.
 func WithAPIVersion(version string) Option {
-	return func(c *Config) {
+	return func(c *Config) error {
 		c.APIVersion = version
+		return nil
 	}
 }
 
 // WithTimeout sets the HTTP timeout.
 func WithTimeout(timeout time.Duration) Option {
-	return func(c *Config) {
+	return func(c *Config) error {
 		c.Timeout = timeout
+		return nil
 	}
 }
 
-// WithRetry configures retry behavior.
-func WithRetry(maxRetries int, waitMin, waitMax time.Duration) Option {
-	return func(c *Config) {
-		c.MaxRetries = maxRetries
-		c.RetryWaitMin = waitMin
-		c.RetryWaitMax = waitMax
+// WithMaxRetries sets maximum retry attempts.
+func WithMaxRetries(retries int) Option {
+	return func(c *Config) error {
+		c.MaxRetries = retries
+		return nil
+	}
+}
+
+// WithHTTPClient sets a custom HTTP client.
+func WithHTTPClient(client *http.Client) Option {
+	return func(c *Config) error {
+		c.HTTPClient = client
+		return nil
 	}
 }
 
 // WithLogger sets the logger.
 func WithLogger(logger types.Logger) Option {
-	return func(c *Config) {
+	return func(c *Config) error {
 		c.Logger = logger
+		return nil
 	}
 }
 
-// WithHTTPClient sets the HTTP client.
-func WithHTTPClient(client *http.Client) Option {
-	return func(c *Config) {
-		c.HTTPClient = client
+// WithSandbox configures for sandbox environment.
+func WithSandbox() Option {
+	return func(c *Config) error {
+		c.TokenURL = "https://test.salesforce.com/services/oauth2/token"
+		return nil
 	}
 }
 
-// WithDebug enables debug logging.
-func WithDebug(debug bool) Option {
-	return func(c *Config) {
-		c.Debug = debug
-		if debug && c.Logger == nil {
-			c.Logger = sfhttp.NewDefaultLogger(true)
-		}
+// WithCustomDomain configures for a custom My Domain.
+func WithCustomDomain(domain string) Option {
+	return func(c *Config) error {
+		c.TokenURL = "https://" + domain + ".my.salesforce.com/services/oauth2/token"
+		c.InstanceURL = "https://" + domain + ".my.salesforce.com"
+		return nil
 	}
 }

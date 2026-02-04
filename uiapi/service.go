@@ -158,7 +158,9 @@ func (s *Service) CreateRecord(ctx context.Context, objectAPIName string, fields
 		return nil, err
 	}
 	var record RecordRepresentation
-	json.Unmarshal(respBody, &record)
+	if err := json.Unmarshal(respBody, &record); err != nil {
+		return nil, fmt.Errorf("failed to parse response: %w", err)
+	}
 	return &record, nil
 }
 
@@ -170,7 +172,9 @@ func (s *Service) UpdateRecord(ctx context.Context, recordId string, fields map[
 		return nil, err
 	}
 	var record RecordRepresentation
-	json.Unmarshal(respBody, &record)
+	if err := json.Unmarshal(respBody, &record); err != nil {
+		return nil, fmt.Errorf("failed to parse response: %w", err)
+	}
 	return &record, nil
 }
 
@@ -189,7 +193,9 @@ func (s *Service) GetObjectInfo(ctx context.Context, objectAPIName string) (*Obj
 		return nil, err
 	}
 	var info ObjectInfo
-	json.Unmarshal(respBody, &info)
+	if err := json.Unmarshal(respBody, &info); err != nil {
+		return nil, fmt.Errorf("failed to parse response: %w", err)
+	}
 	return &info, nil
 }
 
@@ -201,7 +207,9 @@ func (s *Service) GetPicklistValues(ctx context.Context, objectAPIName, recordTy
 		return nil, err
 	}
 	var values PicklistValues
-	json.Unmarshal(respBody, &values)
+	if err := json.Unmarshal(respBody, &values); err != nil {
+		return nil, fmt.Errorf("failed to parse response: %w", err)
+	}
 	return &values, nil
 }
 
@@ -223,6 +231,8 @@ func (s *Service) GetLayout(ctx context.Context, objectAPIName, layoutType, mode
 		return nil, err
 	}
 	var layout LayoutRepresentation
-	json.Unmarshal(respBody, &layout)
+	if err := json.Unmarshal(respBody, &layout); err != nil {
+		return nil, fmt.Errorf("failed to parse response: %w", err)
+	}
 	return &layout, nil
 }

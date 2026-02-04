@@ -19,6 +19,13 @@
             <a href="../index.html" style="color: inherit;">Salesforce Go SDK</a>
         </div>
         <nav class="header-nav">
+      <div class="search-container">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input type="text" id="search-input" class="search-input" placeholder="Search docs...">
+        <div id="search-results" class="search-results"></div>
+      </div>
             <a href="https://github.com/PramithaMJ/salesforce" target="_blank">GitHub</a>
             <a href="https://pkg.go.dev/github.com/PramithaMJ/salesforce" target="_blank">Go Docs</a>
         </nav>
@@ -140,6 +147,7 @@
                 <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
             <pre><code>
+<span class="comment"># Method 1: OAuth 2.0 Refresh Token (Recommended)</span>
 SF_CLIENT_ID=your_connected_app_client_id
 SF_CLIENT_SECRET=your_connected_app_client_secret
 SF_REFRESH_TOKEN=your_refresh_token
@@ -154,6 +162,7 @@ SF_SECURITY_TOKEN=your_security_token
 <span class="comment"># Method 3: Direct Access Token</span>
 SF_ACCESS_TOKEN=your_access_token
 SF_INSTANCE_URL=https://your-instance.salesforce.com
+
 <span class="comment"># Optional: Environment Configuration</span>
 SF_SANDBOX=true                    <span class="comment"># Use sandbox (test.salesforce.com)</span>
 SF_MY_DOMAIN=mycompany             <span class="comment"># Custom My Domain</span>

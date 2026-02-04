@@ -393,7 +393,9 @@ func (s *Service) Upsert(ctx context.Context, objectType, extIDField, extID stri
 		return &CreateResult{Success: true}, nil
 	}
 	var result CreateResult
-	json.Unmarshal(respBody, &result)
+	if err := json.Unmarshal(respBody, &result); err != nil {
+		return nil, fmt.Errorf("failed to parse response: %w", err)
+	}
 	return &result, nil
 }
 

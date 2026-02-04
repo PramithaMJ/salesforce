@@ -108,7 +108,7 @@ func (a *RefreshTokenAuthenticator) doTokenRequest(ctx context.Context, data url
 	body, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode != http.StatusOK {
 		var authErr types.AuthError
-		json.Unmarshal(body, &authErr)
+		_ = json.Unmarshal(body, &authErr) // Best effort parse
 		authErr.StatusCode = resp.StatusCode
 		return nil, &authErr
 	}
@@ -187,7 +187,7 @@ func (a *PasswordAuthenticator) Authenticate(ctx context.Context) (*types.Token,
 	body, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode != http.StatusOK {
 		var authErr types.AuthError
-		json.Unmarshal(body, &authErr)
+		_ = json.Unmarshal(body, &authErr) // Best effort parse
 		authErr.StatusCode = resp.StatusCode
 		return nil, &authErr
 	}

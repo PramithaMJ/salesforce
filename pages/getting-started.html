@@ -11,7 +11,11 @@
 <body>
     <header class="header">
         <div class="logo">
-            <div class="logo-icon">⚡</div>
+            <div class="logo-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                </svg>
+            </div>
             <a href="../index.html" style="color: inherit;">Salesforce Go SDK</a>
         </div>
         <nav class="header-nav">
@@ -128,25 +132,72 @@
         </div>
 
         <h2>Environment Variables</h2>
-        <p>Set up your Salesforce credentials as environment variables:</p>
+        <p>Set up your Salesforce credentials as environment variables. Choose the appropriate method for your use case:
+        </p>
         <div class="code-block">
             <div class="code-header">
                 <span>.env</span>
                 <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
-            <pre><code><span class="comment"># OAuth 2.0 Credentials</span>
+            <pre><code><span class="comment"># ============================================</span>
+<span class="comment"># Method 1: OAuth 2.0 Refresh Token (Recommended)</span>
+<span class="comment"># ============================================</span>
 SF_CLIENT_ID=your_connected_app_client_id
 SF_CLIENT_SECRET=your_connected_app_client_secret
 SF_REFRESH_TOKEN=your_refresh_token
 
-<span class="comment"># Or for Username-Password flow</span>
-SF_USERNAME=your_username
+<span class="comment"># ============================================</span>
+<span class="comment"># Method 2: Username-Password Flow</span>
+<span class="comment"># ============================================</span>
+SF_CLIENT_ID=your_connected_app_client_id
+SF_CLIENT_SECRET=your_connected_app_client_secret
+SF_USERNAME=your_username@example.com
 SF_PASSWORD=your_password
-SF_SECURITY_TOKEN=your_security_token</code></pre>
+SF_SECURITY_TOKEN=your_security_token
+
+<span class="comment"># ============================================</span>
+<span class="comment"># Method 3: Direct Access Token</span>
+<span class="comment"># ============================================</span>
+SF_ACCESS_TOKEN=your_access_token
+SF_INSTANCE_URL=https://your-instance.salesforce.com
+
+<span class="comment"># ============================================</span>
+<span class="comment"># Optional: Environment Configuration</span>
+<span class="comment"># ============================================</span>
+SF_SANDBOX=true                    <span class="comment"># Use sandbox (test.salesforce.com)</span>
+SF_MY_DOMAIN=mycompany             <span class="comment"># Custom My Domain</span>
+SF_API_VERSION=59.0                <span class="comment"># API version to use</span></code></pre>
         </div>
 
         <h2>Configuration Options</h2>
-        <p>The SDK supports various configuration options:</p>
+        <p>The SDK supports various configuration options using the functional options pattern:</p>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>client, err := salesforce.<span class="function">NewClient</span>(
+    <span class="comment">// Authentication (choose one)</span>
+    salesforce.<span class="function">WithOAuthRefresh</span>(clientID, clientSecret, refreshToken),
+    <span class="comment">// OR: salesforce.WithPasswordAuth(username, password, securityToken),</span>
+    <span class="comment">// OR: salesforce.WithAccessToken(accessToken, instanceURL),</span>
+
+    <span class="comment">// Environment</span>
+    salesforce.<span class="function">WithSandbox</span>(),                    <span class="comment">// Use sandbox</span>
+    salesforce.<span class="function">WithCustomDomain</span>(<span class="string">"mycompany"</span>),    <span class="comment">// My Domain</span>
+    salesforce.<span class="function">WithAPIVersion</span>(<span class="string">"59.0"</span>),          <span class="comment">// API version</span>
+
+    <span class="comment">// HTTP Configuration</span>
+    salesforce.<span class="function">WithTimeout</span>(<span class="number">60</span> * time.Second),   <span class="comment">// Request timeout</span>
+    salesforce.<span class="function">WithMaxRetries</span>(<span class="number">5</span>),               <span class="comment">// Retry attempts</span>
+    salesforce.<span class="function">WithHTTPClient</span>(customClient),    <span class="comment">// Custom HTTP client</span>
+
+    <span class="comment">// Logging &amp; Debug</span>
+    salesforce.<span class="function">WithLogger</span>(logger),               <span class="comment">// Custom logger</span>
+    salesforce.<span class="function">WithDebug</span>(<span class="keyword">true</span>),                  <span class="comment">// Enable debug mode</span>
+)</code></pre>
+        </div>
+
         <table>
             <thead>
                 <tr>
@@ -156,6 +207,26 @@ SF_SECURITY_TOKEN=your_security_token</code></pre>
                 </tr>
             </thead>
             <tbody>
+                <tr>
+                    <td><code>WithOAuthRefresh</code></td>
+                    <td>OAuth 2.0 refresh token flow</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td><code>WithPasswordAuth</code></td>
+                    <td>Username-password flow</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td><code>WithAccessToken</code></td>
+                    <td>Direct access token</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td><code>WithCredentials</code></td>
+                    <td>Set client ID and secret</td>
+                    <td>-</td>
+                </tr>
                 <tr>
                     <td><code>WithAPIVersion</code></td>
                     <td>API version to use</td>
@@ -191,6 +262,11 @@ SF_SECURITY_TOKEN=your_security_token</code></pre>
                     <td>Custom logger</td>
                     <td>None</td>
                 </tr>
+                <tr>
+                    <td><code>WithDebug</code></td>
+                    <td>Enable debug logging</td>
+                    <td>false</td>
+                </tr>
             </tbody>
         </table>
 
@@ -201,7 +277,7 @@ SF_SECURITY_TOKEN=your_security_token</code></pre>
     </main>
 
     <footer class="footer">
-        <p>Salesforce Go SDK v2.0.0 • <a href="https://github.com/PramithaMJ/salesforce">GitHub</a> • MIT License</p>
+        <p>Salesforce Go SDK v2.0.0 | <a href="https://github.com/PramithaMJ/salesforce">GitHub</a> | MIT License</p>
     </footer>
 
     <script src="../js/main.js"></script>

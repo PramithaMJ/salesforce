@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/PramithaMJ/salesforce/analytics"
 	"github.com/PramithaMJ/salesforce/apex"
@@ -145,8 +144,8 @@ func (c *Client) Analytics() *analytics.Service { return c.analytics }
 // Tooling returns the Tooling API service.
 func (c *Client) Tooling() *tooling.Service { return c.tooling }
 
-// Connect returns the Connect/Chatter service.
-func (c *Client) Connect() *connect.Service { return c.connect }
+// Chatter returns the Connect/Chatter service.
+func (c *Client) Chatter() *connect.Service { return c.connect }
 
 // Limits returns the Limits service.
 func (c *Client) Limits() *limits.Service { return c.limits }
